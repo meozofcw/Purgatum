@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard | Meu RPG</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Painel do Jogador</h1>
+    <button onclick="netlifyIdentity.logout()">Sair</button>
+  </header>
+  <main>
+    <section id="conteudo-restrito">
+      <h2>Bem-vindo, <span id="nome-usuario"></span>!</h2>
+      <div class="rpg-content">
+        <h3>Fichas de Personagens</h3>
+        <table>
+          <tr>
+            <th>Nome</th>
+            <th>Classe</th>
+            <th>Nível</th>
+          </tr>
+          <tr>
+            <td>Gandalf</td>
+            <td>Mago</td>
+            <td>7</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    if (!netlifyIdentity.currentUser()) {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("nome-usuario").textContent = 
+        netlifyIdentity.currentUser().user_metadata.full_name || "Aventureiro";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+/* Reset e Estilos Gerais */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a2e;
+    color: #fff;
+  }
+  
+  /* Vídeo de Introdução */
+  #intro-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #000;
+  }
+  
+  #intro-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  #skip-intro {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Header */
+  header {
+    background-color: #16213e;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .btn-login {
+    background-color: #4cc9f0;
+    color: #000;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  
+  /* Login */
+  .login-container {
+    max-width: 400px;
+    margin: 5rem auto;
+    text-align: center;
+  }
+  
+  .netlify-btn {
+    margin-top: 2rem;
+  }
+  
+  /* Conteúdo Restrito */
+  .rpg-content {
+    margin: 2rem;
+    padding: 1rem;
+    background-color: #0f3460;
+    border-radius: 8px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table, th, td {
+    border: 1px solid #4cc9f0;
+  }
+  
+  th, td {
+    padding: 0.5rem;
+    text-align: left;
+  }
