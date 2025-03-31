@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu RPG Épico</title>
+    <title>Purgatum RPG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Reset e Estilos Gerais */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'EB Garamond', serif;
         }
         
         body {
-            background-color: #1a1a2e;
-            color: #ecf0f1;
+            background-color: #ffffff;
+            color: #000000;
+            line-height: 1.6;
         }
 
         /* Vídeo de Introdução */
@@ -35,6 +36,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: grayscale(100%);
         }
 
         #skip-intro {
@@ -43,26 +45,28 @@
             right: 20px;
             z-index: 10000;
             padding: 8px 16px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: 2px solid #4cc9f0;
-            border-radius: 5px;
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 0;
             cursor: pointer;
             font-weight: bold;
+            letter-spacing: 1px;
         }
 
         /* Barra de Navegação */
         nav {
-            background-color: #16213e;
-            padding: 1rem 2rem;
+            background-color: #fff;
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #000;
         }
         
         .logo {
-            height: 60px;
+            height: 70px;
             display: flex;
             align-items: center;
         }
@@ -70,160 +74,150 @@
         .logo img {
             height: 100%;
             width: auto;
-            max-width: 200px;
-            transition: all 0.3s ease;
-            object-fit: contain;
-        }
-        
-        .logo img:hover {
-            filter: brightness(1.1) drop-shadow(0 0 5px rgba(76, 201, 240, 0.7));
+            max-width: 250px;
+            filter: grayscale(100%) contrast(120%);
         }
         
         .nav-links {
             display: flex;
-            gap: 1.5rem;
+            gap: 2rem;
         }
         
         .nav-links a {
-            color: #ecf0f1;
+            color: #000;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s;
-            padding: 0.5rem;
-        }
-        
-        .nav-links a:hover {
-            color: #4cc9f0;
-            border-bottom: 2px solid #4cc9f0;
-        }
-
-        /* Carrossel de Imagens */
-        .carousel {
-            width: 100%;
-            height: 70vh;
-            overflow: hidden;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
             position: relative;
-            margin-bottom: 2rem;
         }
         
-        .carousel-inner {
-            display: flex;
-            transition: transform 0.5s ease;
-            height: 100%;
-        }
-        
-        .carousel-item {
-            min-width: 100%;
-            height: 100%;
-        }
-        
-        .carousel-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .carousel-control {
+        .nav-links a.active:after,
+        .nav-links a:hover:after {
+            content: '';
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            padding: 1.5rem;
-            cursor: pointer;
-            z-index: 10;
-            border-radius: 50%;
-            font-size: 1.2rem;
-        }
-        
-        .prev {
-            left: 20px;
-        }
-        
-        .next {
-            right: 20px;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #000;
         }
 
-        /* Seção de Fichas Digitais */
-        .feature-section {
-            padding: 4rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            background-color: #0f3460;
-            border-radius: 10px;
-            margin-bottom: 3rem;
+        /* Conteúdo Principal */
+        .main-content {
+            display: flex;
+            min-height: calc(100vh - 150px);
+        }
+
+        /* Seção de Texto */
+        .text-section {
+            flex: 1;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
-        .feature-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: #4cc9f0;
-            font-family: 'Cinzel', serif;
-        }
-        
-        .feature-section p {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            color: #b8c2cc;
+        .text-section h1 {
+            font-size: 3rem;
             margin-bottom: 2rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        
+        .text-section p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 3rem;
         }
         
         .cta-button {
             display: inline-block;
-            background-color: #4cc9f0;
-            color: #16213e;
+            background: #000;
+            color: #fff;
             padding: 1rem 2rem;
-            border-radius: 5px;
             text-decoration: none;
-            font-weight: bold;
+            border: 2px solid #000;
             transition: all 0.3s;
-            border: 2px solid transparent;
-            font-size: 1.1rem;
+            align-self: flex-start;
         }
         
         .cta-button:hover {
-            background-color: transparent;
-            color: #4cc9f0;
-            border-color: #4cc9f0;
+            background: transparent;
+            color: #000;
+        }
+
+        /* Seção da Ficha */
+        .sheet-section {
+            flex: 1;
+            background: #f5f5f5;
+            padding: 4rem;
+            border-left: 1px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .sheet-preview {
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            background: #fff;
+            border: 1px solid #000;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 2rem;
         }
 
         /* Rodapé */
         footer {
-            background-color: #16213e;
-            color: #ecf0f1;
+            background-color: #fff;
+            color: #000;
             text-align: center;
             padding: 2rem;
-            margin-top: 2rem;
+            border-top: 1px solid #000;
+            font-size: 0.9rem;
         }
 
-        /* Efeitos Especiais RPG */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse-effect {
-            animation: pulse 3s infinite;
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sheet-section {
+                border-left: none;
+                border-top: 1px solid #000;
+            }
+            
+            .text-section,
+            .sheet-section {
+                padding: 3rem 2rem;
+            }
         }
 
         @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
             .logo img {
-                max-width: 150px;
+                max-width: 200px;
             }
             
             .nav-links {
-                gap: 0.8rem;
-                font-size: 0.9rem;
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
-            .carousel {
-                height: 50vh;
+            .text-section h1 {
+                font-size: 2.2rem;
             }
         }
     </style>
@@ -241,11 +235,7 @@
     <!-- Barra de Navegação -->
     <nav>
         <div class="logo">
-            <picture>
-                <source srcset="assets/logo-rpg.webp" type="image/webp">
-                <source srcset="assets/logo-rpg.png" type="image/png">
-                <img src="assets/logo-rpg.png" alt="Reinos Perdidos RPG" loading="lazy">
-            </picture>
+            <img src="assets/purgatum-logo.png" alt="Purgatum RPG">
         </div>
         <div class="nav-links">
             <a href="index.html" class="active">Inicio</a>
@@ -258,33 +248,26 @@
         </div>
     </nav>
 
-    <!-- Carrossel de Imagens -->
-    <div class="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1605106702734-205df224ecce?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Mundo de Fantasia">
+    <!-- Conteúdo Principal -->
+    <div class="main-content">
+        <!-- Seção de Texto -->
+        <section class="text-section">
+            <h1>PURGATUM RPG</h1>
+            <p>Fichas Digitais - Acesso rápido e simplificado a todas as informações de sua ficha. Faça a rolagem de perícias, atributos e ataques com um único clique. Concentre-se menos na matemática e foque no que realmente importa que é se divertir ao lado de seus amigos!</p>
+            <a href="login.html" class="cta-button">Acessar Minha Ficha</a>
+        </section>
+        
+        <!-- Seção da Ficha -->
+        <section class="sheet-section">
+            <div class="sheet-preview">
+                [PRÉ-VISUALIZAÇÃO DA FICHA DE PERSONAGEM]
             </div>
-            <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Dados de RPG">
-            </div>
-            <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Aventura Épica">
-            </div>
-        </div>
-        <button class="carousel-control prev"><i class="fas fa-chevron-left"></i></button>
-        <button class="carousel-control next"><i class="fas fa-chevron-right"></i></button>
+        </section>
     </div>
-
-    <!-- Seção de Fichas Digitais -->
-    <section class="feature-section pulse-effect">
-        <h2>Fichas Digitais</h2>
-        <p>Acesso rápido e simplificado a todas as informações de sua ficha. Faça a rolagem de perícias, atributos e ataques com um único clique. Concentre-se menos na matemática e foque no que realmente importa que é se divertir ao lado de seus amigos!</p>
-        <a href="login.html" class="cta-button">Acessar Minha Ficha</a>
-    </section>
 
     <!-- Rodapé -->
     <footer>
-        <p>&copy; 2023 Reinos Perdidos RPG. Todos os direitos reservados.</p>
+        <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
     </footer>
 
     <script>
@@ -294,37 +277,6 @@
         }
 
         document.querySelector('#intro-video video')?.addEventListener('ended', pularIntro);
-
-        // Script do Carrossel
-        document.addEventListener('DOMContentLoaded', function() {
-            const carouselInner = document.querySelector('.carousel-inner');
-            const items = document.querySelectorAll('.carousel-item');
-            const prevBtn = document.querySelector('.prev');
-            const nextBtn = document.querySelector('.next');
-            
-            let currentIndex = 0;
-            const totalItems = items.length;
-            
-            function updateCarousel() {
-                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
-            }
-            
-            nextBtn.addEventListener('click', function() {
-                currentIndex = (currentIndex + 1) % totalItems;
-                updateCarousel();
-            });
-            
-            prevBtn.addEventListener('click', function() {
-                currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-                updateCarousel();
-            });
-            
-            // Rotação automática
-            setInterval(function() {
-                currentIndex = (currentIndex + 1) % totalItems;
-                updateCarousel();
-            }, 5000);
-        });
 
         // Netlify Identity (para redirecionamento após login)
         if (window.netlifyIdentity) {
