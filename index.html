@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu RPG Épico</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Reset e Estilos Gerais */
         * {
@@ -61,10 +62,21 @@
         }
         
         .logo {
-            color: #4cc9f0;
-            font-size: 1.8rem;
-            font-weight: bold;
-            font-family: 'Cinzel', serif;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 100%;
+            width: auto;
+            max-width: 200px;
+            transition: all 0.3s ease;
+            object-fit: contain;
+        }
+        
+        .logo img:hover {
+            filter: brightness(1.1) drop-shadow(0 0 5px rgba(76, 201, 240, 0.7));
         }
         
         .nav-links {
@@ -199,31 +211,131 @@
         .pulse-effect {
             animation: pulse 3s infinite;
         }
+
+        @media (max-width: 768px) {
+            .logo img {
+                max-width: 150px;
+            }
+            
+            .nav-links {
+                gap: 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .carousel {
+                height: 50vh;
+            }
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <!-- Vídeo de Introdução -->
-  <div id="intro-video">
-    <video autoplay muted playsinline>
-      <source src="videos/intro.mp4" type="video/mp4">
-    </video>
-    <button id="skip-intro" onclick="pularIntro()">Pular</button>
-  </div>
+    <!-- Vídeo de Introdução -->
+    <div id="intro-video">
+        <video autoplay muted playsinline>
+            <source src="videos/intro.mp4" type="video/mp4">
+        </video>
+        <button id="skip-intro" onclick="pularIntro()">Pular Introdução</button>
+    </div>
 
-  <!-- Conteúdo Principal (aparece após o vídeo) -->
-  <header>
-    <h1>🌑 Mundo do RPG</h1>
-    <a href="login.html" class="btn-login">Entrar</a>
-  </header>
-  <main>
-    <section class="hero">
-      <h2>Bem-vindo à campanha <span>"Reinos Perdidos"</span></h2>
-      <p>Explore o lore, fichas de personagens e sessões.</p>
+    <!-- Barra de Navegação -->
+    <nav>
+        <div class="logo">
+            <picture>
+                <source srcset="assets/logo-rpg.webp" type="image/webp">
+                <source srcset="assets/logo-rpg.png" type="image/png">
+                <img src="assets/logo-rpg.png" alt="Reinos Perdidos RPG" loading="lazy">
+            </picture>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="active">Inicio</a>
+            <a href="#">Downloads</a>
+            <a href="#">Atualizações</a>
+            <a href="#">Nos Apoie</a>
+            <a href="#">Ficha</a>
+            <a href="#">Registre-se</a>
+            <a href="login.html">Login</a>
+        </div>
+    </nav>
+
+    <!-- Carrossel de Imagens -->
+    <div class="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1605106702734-205df224ecce?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Mundo de Fantasia">
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Dados de RPG">
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Aventura Épica">
+            </div>
+        </div>
+        <button class="carousel-control prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-control next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- Seção de Fichas Digitais -->
+    <section class="feature-section pulse-effect">
+        <h2>Fichas Digitais</h2>
+        <p>Acesso rápido e simplificado a todas as informações de sua ficha. Faça a rolagem de perícias, atributos e ataques com um único clique. Concentre-se menos na matemática e foque no que realmente importa que é se divertir ao lado de seus amigos!</p>
+        <a href="login.html" class="cta-button">Acessar Minha Ficha</a>
     </section>
-  </main>
 
-  <script src="js/script.js"></script>
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2023 Reinos Perdidos RPG. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Controle do Vídeo de Introdução
+        function pularIntro() {
+            document.getElementById('intro-video').style.display = 'none';
+        }
+
+        document.querySelector('#intro-video video')?.addEventListener('ended', pularIntro);
+
+        // Script do Carrossel
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselInner = document.querySelector('.carousel-inner');
+            const items = document.querySelectorAll('.carousel-item');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            
+            let currentIndex = 0;
+            const totalItems = items.length;
+            
+            function updateCarousel() {
+                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+            
+            nextBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex + 1) % totalItems;
+                updateCarousel();
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+                updateCarousel();
+            });
+            
+            // Rotação automática
+            setInterval(function() {
+                currentIndex = (currentIndex + 1) % totalItems;
+                updateCarousel();
+            }, 5000);
+        });
+
+        // Netlify Identity (para redirecionamento após login)
+        if (window.netlifyIdentity) {
+            netlifyIdentity.on("init", user => {
+                if (!user) {
+                    netlifyIdentity.on("login", () => {
+                        document.location.href = "/dashboard.html";
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>
