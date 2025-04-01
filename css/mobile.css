@@ -1,0 +1,11 @@
+/* mobile.css */
+.sheet-section {
+    padding: 2rem 1rem;
+}
+
+.sheet-container {
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ... (use o mesmo CSS da versão mobile que te enviei) ... */
