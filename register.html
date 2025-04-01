@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Purgatum RPG</title>
+    <!-- [Use o mesmo CSS do login.html] -->
+    <style>
+        /* Adicione estas regras extras para o formulário de registro */
+        .terms-conditions {
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .terms-conditions input {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (igual ao login) -->
+    <nav class="auth-nav">
+        <div class="logo">
+            <img src="assets/logo-purgatum.webp" alt="Purgatum RPG">
+        </div>
+        <a href="index.html" class="back-home">
+            <i class="fas fa-arrow-left"></i> Voltar ao site
+        </a>
+    </nav>
+    
+    <!-- Container Principal -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Crie sua conta</h1>
+                <p>Junte-se à comunidade Purgatum</p>
+            </div>
+            
+            <form class="auth-form">
+                <div class="form-group">
+                    <label for="username">Nome de usuário</label>
+                    <input type="text" id="username" placeholder="purgatum_player" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirme sua senha</label>
+                    <input type="password" id="confirm-password" placeholder="••••••••" required>
+                    <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+                </div>
+                
+                <div class="terms-conditions">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">Eu concordo com os <a href="#" class="auth-link">Termos de Serviço</a> e <a href="#" class="auth-link">Política de Privacidade</a></label>
+                </div>
+                
+                <button type="submit" class="auth-btn">Registrar-se</button>
+                
+                <div class="divider">ou</div>
+                
+                <div class="social-login">
+                    <a href="#" class="social-btn" title="Registrar com Google">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="#" class="social-btn" title="Registrar com Discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="#" class="social-btn" title="Registrar com Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </form>
+            
+            <p style="text-align: center; margin-top: 1.5rem; color: #777;">
+                Já tem uma conta? <a href="login.html" class="auth-link">Faça login</a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Rodapé (igual ao login) -->
+    <footer class="auth-footer">
+        <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
+    </footer>
+    
+    <script>
+        // Mostrar/ocultar senha
+        document.querySelectorAll('.password-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const inputId = this.id === 'togglePassword' ? 'password' : 'confirm-password';
+                const input = document.getElementById(inputId);
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+            });
+        });
+        
+        // Validação do formulário
+        const form = document.querySelector('.auth-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validação básica de senha
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+            
+            // Adicione aqui a lógica de registro
+            console.log('Formulário de registro enviado');
+        });
+    </script>
+</body>
+</html>
