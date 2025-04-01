@@ -85,34 +85,4 @@ body {
     padding: 0.5rem;
     text-align: left;
   }
-/* Versão Mobile (substitui a seção existente em telas pequenas) */
-@media (max-width: 768px) {
-    .sheet-section {
-        padding: 2rem 1rem !important;
-    }
-    
-    .sheet-container {
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-    }
-    
-    .sheet-image {
-        order: -1 !important;
-        max-width: 100% !important;
-    }
-    
-    .sheet-text {
-        text-align: center !important;
-        padding: 0 0.5rem !important;
-    }
-    
-    .sheet-text h1 {
-        font-size: 1.8rem !important;
-    }
-    
-    .cta-button {
-        width: 100% !important;
-        max-width: 250px !important;
-        margin: 0 auto !important;
-    }
-}
+
