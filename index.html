@@ -229,35 +229,43 @@
             transform: scale(1.2);
         }
 
-        /* Conteúdo Principal */
-        .content-section {
+        /* Conteúdo Principal - Seção de Fichas Ampliada */
+        .sheet-section {
+            background-color: #111;
+            padding: 4rem 2rem;
+            margin: 2rem 0;
+        }
+        
+        .sheet-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 3rem 2rem;
             display: flex;
             gap: 3rem;
+            align-items: center;
         }
         
-        .text-content {
-            flex: 2;
+        .sheet-text {
+            flex: 1;
+            padding: 2rem;
         }
         
-        .text-content h1 {
+        .sheet-text h1 {
             font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 1.5rem;
             color: #fff;
+            line-height: 1.2;
         }
         
-        .text-content p {
-            font-size: 1.1rem;
-            line-height: 1.6;
+        .sheet-text p {
+            font-size: 1.2rem;
+            line-height: 1.7;
             color: #ccc;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
         
         /* Ênfase na palavra "digital" */
-        .text-content em {
+        .sheet-text em {
             font-style: normal;
             text-decoration: underline;
             text-decoration-color: #917d7d;
@@ -265,33 +273,87 @@
             text-underline-offset: 4px;
         }
         
-        .sheet-preview {
+        .sheet-image {
             flex: 1;
-            background-color: #111;
-            border: 1px solid #333;
-            border-radius: 5px;
-            padding: 2rem;
             display: flex;
-            align-items: center;
             justify-content: center;
-            min-height: 300px;
+            align-items: center;
+        }
+        
+        .sheet-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
         }
         
         .cta-button {
             display: inline-block;
-            background-color: #fff;
-            color: #000;
-            padding: 1rem 2rem;
+            background-color: #917d7d;
+            color: #fff;
+            padding: 1rem 2.5rem;
             border-radius: 5px;
             text-decoration: none;
             font-weight: bold;
             transition: all 0.3s;
-            border: 2px solid #fff;
+            border: 2px solid #917d7d;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .cta-button:hover {
             background-color: transparent;
+            color: #917d7d;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+        
+        /* Recursos da Ficha */
+        .sheet-features {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: #917d7d;
+        }
+        
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #917d7d;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
             color: #fff;
+        }
+        
+        .feature-card p {
+            color: #aaa;
+            line-height: 1.6;
         }
         
         footer {
@@ -303,7 +365,7 @@
         }
 
         @media (max-width: 768px) {
-            .content-section {
+            .sheet-container {
                 flex-direction: column;
             }
             
@@ -324,6 +386,14 @@
             .carousel-caption {
                 font-size: 1.2rem;
                 padding: 1rem 2rem;
+            }
+            
+            .sheet-text h1 {
+                font-size: 2.2rem;
+            }
+            
+            .sheet-text p {
+                font-size: 1rem;
             }
         }
     </style>
@@ -377,14 +447,57 @@
         </div>
     </div>
 
-    <div class="content-section">
-        <div class="text-content">
-            <h1>Fichas <em>Digital</em> </h1>
-            <p>Acesso rápido e simplificado a todas as informações de sua ficha. Faça a rolagem de perícias, atributos e ataques com um único clique. Concentre-se menos na matemática e foque no que realmente importa que é se divertir ao lado de seus amigos!</p>
-            <a href="login.html" class="cta-button">Acessar Minha Ficha</a>
+    <!-- Seção Ampliada das Fichas Digitais -->
+    <section class="sheet-section">
+        <div class="sheet-container">
+            <div class="sheet-text">
+                <h1>Fichas <em>Digitais</em> Purgatum</h1>
+                <p>Acesso rápido e simplificado a todas as informações de sua ficha. Faça a rolagem de perícias, atributos e ataques com um único clique. Concentre-se menos na matemática e foque no que realmente importa que é se divertir ao lado de seus amigos!</p>
+                <p>Nossa plataforma digital oferece uma experiência intuitiva e completa para gerenciar seu personagem, com atualizações em tempo real, integração com o sistema de regras e ferramentas para mestres.</p>
+                <a href="login.html" class="cta-button">Acessar Minha Ficha</a>
+            </div>
+            <div class="sheet-image">
+                <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Exemplo de Ficha Digital">
+            </div>
         </div>
-        <div class="sheet-preview">
-            Pré-visualização da Ficha de Personagem
+    </section>
+
+    <!-- Seção de Recursos -->
+    <div class="sheet-features">
+        <h2 style="text-align: center; font-family: 'Cinzel', serif; font-size: 2.5rem; margin-bottom: 1rem; color: #fff;">Recursos Exclusivos</h2>
+        <p style="text-align: center; font-size: 1.2rem; color: #aaa; max-width: 800px; margin: 0 auto;">Descubra tudo o que nossa ficha digital pode oferecer para melhorar sua experiência de jogo</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-dice"></i>
+                <h3>Rolagem Automática</h3>
+                <p>Calcule automaticamente resultados de testes, ataques e danos com um simples clique.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-sync-alt"></i>
+                <h3>Sincronização em Tempo Real</h3>
+                <p>Atualizações instantâneas para todos os jogadores durante a sessão.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Acesso Multiplataforma</h3>
+                <p>Acesse sua ficha de qualquer dispositivo, a qualquer momento.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-book"></i>
+                <h3>Biblioteca de Regras</h3>
+                <p>Acesso rápido às regras do jogo diretamente da sua ficha.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Gráficos e Estatísticas</h3>
+                <p>Acompanhe o progresso do seu personagem com visualizações intuitivas.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h3>Gerenciamento de Grupo</h3>
+                <p>Ferramentas para mestres gerenciarem toda a party em um só lugar.</p>
+            </div>
         </div>
     </div>
 
