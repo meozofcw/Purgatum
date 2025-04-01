@@ -5,237 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Purgatum RPG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Reset e Estilos Gerais */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'EB Garamond', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #ffffff;
-            color: #000000;
-            line-height: 1.6;
-        }
-
-        /* Vídeo de Introdução */
-        #intro-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
             background-color: #000;
-        }
-
-        #intro-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%);
-        }
-
-        #skip-intro {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.9);
-            color: #000;
-            border: 2px solid #000;
-            border-radius: 0;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 1px;
+            color: #FFF;
         }
 
         /* Barra de Navegação */
         nav {
-            background-color: #fff;
-            padding: 1.5rem 2rem;
+            background-color: #000;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border-bottom: 1px solid #000;
-        }
-        
-        .logo {
-            height: 70px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo img {
-            height: 100%;
-            width: auto;
-            max-width: 250px;
-            filter: grayscale(100%) contrast(120%);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
+            border-bottom: 2px solid #FFF;
         }
         
         .nav-links a {
-            color: #000;
+            color: #FFF;
             text-decoration: none;
             font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            position: relative;
+            transition: color 0.3s;
+            padding: 0.5rem;
         }
         
-        .nav-links a.active:after,
-        .nav-links a:hover:after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #000;
+        .nav-links a:hover {
+            color: #CCC;
+            border-bottom: 2px solid #FFF;
         }
 
-        /* Conteúdo Principal */
-        .main-content {
-            display: flex;
-            min-height: calc(100vh - 150px);
-        }
-
-        /* Seção de Texto */
-        .text-section {
-            flex: 1;
-            padding: 4rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        /* Seção Principal */
+        .feature-section {
+            background-color: #111;
+            border-radius: 10px;
+            padding: 2rem;
         }
         
-        .text-section h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-            letter-spacing: 2px;
-            font-weight: 700;
+        .feature-section h2 {
+            color: #FFF;
+            font-family: 'Cinzel', serif;
         }
         
-        .text-section p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 3rem;
+        .feature-section p {
+            color: #DDD;
         }
         
         .cta-button {
-            display: inline-block;
-            background: #000;
-            color: #fff;
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border: 2px solid #000;
-            transition: all 0.3s;
-            align-self: flex-start;
+            background-color: #FFF;
+            color: #000;
+            border: 2px solid #FFF;
         }
         
         .cta-button:hover {
-            background: transparent;
-            color: #000;
-        }
-
-        /* Seção da Ficha */
-        .sheet-section {
-            flex: 1;
-            background: #f5f5f5;
-            padding: 4rem;
-            border-left: 1px solid #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .sheet-preview {
-            width: 100%;
-            max-width: 500px;
-            height: 600px;
-            background: #fff;
-            border: 1px solid #000;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            text-align: center;
-            padding: 2rem;
+            background-color: transparent;
+            color: #FFF;
         }
 
         /* Rodapé */
         footer {
-            background-color: #fff;
-            color: #000;
+            background-color: #000;
             text-align: center;
             padding: 2rem;
-            border-top: 1px solid #000;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 1024px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .sheet-section {
-                border-left: none;
-                border-top: 1px solid #000;
-            }
-            
-            .text-section,
-            .sheet-section {
-                padding: 3rem 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            
-            .logo img {
-                max-width: 200px;
-            }
-            
-            .nav-links {
-                gap: 1rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .text-section h1 {
-                font-size: 2.2rem;
-            }
+            border-top: 2px solid #FFF;
         }
     </style>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-    <!-- Vídeo de Introdução -->
-    <div id="intro-video">
-        <video autoplay muted playsinline>
-            <source src="videos/intro.mp4" type="video/mp4">
-        </video>
-        <button id="skip-intro" onclick="pularIntro()">Pular Introdução</button>
-    </div>
-
-    <!-- Barra de Navegação -->
     <nav>
         <div class="logo">
-            <img src="assets/purgatum-logo.png" alt="Purgatum RPG">
+            <img src="assets/purgatum-logo.webp" alt="Purgatum RPG">
         </div>
         <div class="nav-links">
             <a href="index.html" class="active">Inicio</a>
@@ -248,46 +95,16 @@
         </div>
     </nav>
 
-    <!-- Conteúdo Principal -->
     <div class="main-content">
-        <!-- Seção de Texto -->
-        <section class="text-section">
-            <h1>PURGATUM RPG</h1>
-            <p>Fichas Digitais - Acesso rápido e simplificado a todas as informações de sua ficha. Faça a rolagem de perícias, atributos e ataques com um único clique. Concentre-se menos na matemática e foque no que realmente importa que é se divertir ao lado de seus amigos!</p>
+        <section class="feature-section">
+            <h2>Fichas Digitais</h2>
+            <p>Acesso rápido e simplificado a todas as informações de sua ficha.</p>
             <a href="login.html" class="cta-button">Acessar Minha Ficha</a>
-        </section>
-        
-        <!-- Seção da Ficha -->
-        <section class="sheet-section">
-            <div class="sheet-preview">
-                [PRÉ-VISUALIZAÇÃO DA FICHA DE PERSONAGEM]
-            </div>
         </section>
     </div>
 
-    <!-- Rodapé -->
     <footer>
         <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
     </footer>
-
-    <script>
-        // Controle do Vídeo de Introdução
-        function pularIntro() {
-            document.getElementById('intro-video').style.display = 'none';
-        }
-
-        document.querySelector('#intro-video video')?.addEventListener('ended', pularIntro);
-
-        // Netlify Identity (para redirecionamento após login)
-        if (window.netlifyIdentity) {
-            netlifyIdentity.on("init", user => {
-                if (!user) {
-                    netlifyIdentity.on("login", () => {
-                        document.location.href = "/dashboard.html";
-                    });
-                }
-            });
-        }
-    </script>
 </body>
 </html>
