@@ -56,6 +56,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid #333;
         }
         
         .logo {
@@ -85,13 +86,24 @@
             color: #fff;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s;
+            transition: all 0.3s;
             padding: 0.5rem;
+            position: relative;
         }
         
         .nav-links a:hover {
             color: #ccc;
-            border-bottom: 2px solid #ccc;
+        }
+        
+        .nav-links a.active:after,
+        .nav-links a:hover:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ccc;
         }
 
         .carousel {
@@ -118,6 +130,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            opacity: 0.8;
         }
         
         .carousel-control {
@@ -132,6 +145,11 @@
             z-index: 10;
             border-radius: 50%;
             font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .carousel-control:hover {
+            background-color: rgba(255, 255, 255, 0.9);
         }
         
         .prev {
@@ -140,6 +158,89 @@
         
         .next {
             right: 20px;
+        }
+        
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: flex;
+            gap: 3rem;
+        }
+        
+        .text-content {
+            flex: 2;
+        }
+        
+        .text-content h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+        }
+        
+        .text-content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 2rem;
+        }
+        
+        .sheet-preview {
+            flex: 1;
+            background-color: #111;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #fff;
+            color: #000;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid #fff;
+        }
+        
+        .cta-button:hover {
+            background-color: transparent;
+            color: #fff;
+        }
+        
+        footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #333;
+        }
+
+        @media (max-width: 768px) {
+            .content-section {
+                flex-direction: column;
+            }
+            
+            .logo img {
+                max-width: 200px;
+                height: auto;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .carousel {
+                height: 40vh;
+            }
         }
     </style>
 </head>
@@ -182,12 +283,59 @@
         <button class="carousel-control next"><i class="fas fa-chevron-right"></i></button>
     </div>
 
+    <div class="content-section">
+        <div class="text-content">
+            <h1>Fichas Digitais Purgatum</h1>
+            <p>Acesso rápido e simplificado a todas as informações de sua ficha. Faça a rolagem de perícias, atributos e ataques com um único clique. Concentre-se menos na matemática e foque no que realmente importa que é se divertir ao lado de seus amigos!</p>
+            <a href="login.html" class="cta-button">Acessar Minha Ficha</a>
+        </div>
+        <div class="sheet-preview">
+            Pré-visualização da Ficha de Personagem
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
+    </footer>
+
     <script>
+        // Controle do Vídeo de Introdução
         function pularIntro() {
             document.getElementById('intro-video').style.display = 'none';
         }
 
         document.querySelector('#intro-video video')?.addEventListener('ended', pularIntro);
+
+        // Script do Carrossel
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselInner = document.querySelector('.carousel-inner');
+            const items = document.querySelectorAll('.carousel-item');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            
+            let currentIndex = 0;
+            const totalItems = items.length;
+            
+            function updateCarousel() {
+                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+            
+            nextBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex + 1) % totalItems;
+                updateCarousel();
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+                updateCarousel();
+            });
+            
+            // Rotação automática
+            setInterval(function() {
+                currentIndex = (currentIndex + 1) % totalItems;
+                updateCarousel();
+            }, 5000);
+        });
     </script>
 </body>
 </html>
