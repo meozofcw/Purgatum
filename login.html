@@ -352,13 +352,19 @@
 
         // Login com Google
         document.getElementById('googleLogin').addEventListener('click', function(e) {
-            e.preventDefault();
-            const clientId = '771240663995-d95o486e7709iqekmm2nrtni676l5j5q.apps.googleusercontent.com';
-            const redirectUri = encodeURIComponent('https://purgatumrpg.netlify.app/.netlify/functions/google-auth-callback');
-            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email%20profile&access_type=offline&prompt=consent`;
-            
-            window.location.href = authUrl;
-        });
+    e.preventDefault();
+    const clientId = '771240663995-d95o486e7709iqekmm2nrtni676l5j5q.apps.googleusercontent.com';
+    const redirectUri = 'https://purgatumrpg.netlify.app/.netlify/functions/google-auth-callback';
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                   `client_id=${clientId}&` +
+                   `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                   `response_type=code&` +
+                   `scope=email%20profile&` +
+                   `access_type=offline&` +
+                   `prompt=consent`;
+    
+    window.location.href = authUrl;
+});
 
         // Login com Discord
         document.getElementById('discordLogin').addEventListener('click', function(e) {
