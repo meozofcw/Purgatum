@@ -167,6 +167,7 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 1rem;
+            width: 100%;
         }
         
         .auth-btn:hover {
@@ -207,27 +208,39 @@
         
         .social-login {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             gap: 1rem;
             margin-top: 1.5rem;
         }
         
         .social-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--input-bg);
-            border: 1px solid #333;
             display: flex;
-            justify-content: center;
             align-items: center;
-            color: #ccc;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
             transition: all 0.3s;
+            border: 1px solid #333;
+            background-color: var(--input-bg);
+            color: var(--light-text);
+            text-decoration: none;
         }
         
         .social-btn:hover {
             background-color: #222;
-            color: var(--primary-color);
+        }
+        
+        .social-btn.google {
+            background-color: #4285F4;
+            border-color: #4285F4;
+        }
+        
+        .social-btn.discord {
+            background-color: #5865F2;
+            border-color: #5865F2;
         }
         
         /* Rodapé */
@@ -253,10 +266,6 @@
                 flex-direction: column;
                 gap: 1rem;
             }
-            
-            .auth-btn {
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -279,7 +288,7 @@
                 <p>Acesse sua conta para gerenciar suas fichas</p>
             </div>
             
-            <form class="auth-form">
+            <form class="auth-form" id="loginForm">
                 <div class="form-group">
                     <label for="email">E-mail</label>
                     <input type="email" id="email" placeholder="seu@email.com" required>
@@ -305,13 +314,12 @@
                 <div class="divider">ou</div>
                 
                 <div class="social-login">
-                    <a href="#" class="social-btn" title="Entrar com Google">
-                        <i class="fab fa-google"></i>
+                    <a href="#" id="googleLogin" class="social-btn google">
+                        <i class="fab fa-google"></i> Continuar com Google
                     </a>
-                    <a href="#" class="social-btn" title="Entrar com Discord">
-                        <i class="fab fa-discord"></i>
+                    <a href="#" id="discordLogin" class="social-btn discord">
+                        <i class="fab fa-discord"></i> Continuar com Discord
                     </a>
-                
                 </div>
             </form>
             
@@ -327,6 +335,12 @@
     </footer>
     
     <script>
+        // Configurações - Substitua com seus próprios valores
+        const GOOGLE_CLIENT_ID = 'SEU_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+        const GOOGLE_REDIRECT_URI = encodeURIComponent('https://seusite.netlify.app/auth/google/callback');
+        const DISCORD_CLIENT_ID = 'SEU_DISCORD_CLIENT_ID';
+        const DISCORD_REDIRECT_URI = encodeURIComponent('https://seusite.netlify.app/auth/discord/callback');
+        
         // Mostrar/ocultar senha
         const togglePassword = document.querySelector('#togglePassword');
         const password = document.querySelector('#password');
@@ -337,13 +351,49 @@
             this.classList.toggle('fa-eye-slash');
         });
         
+        // Login com Google
+        document.getElementById('googleLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?
+                client_id=${GOOGLE_CLIENT_ID}&
+                redirect_uri=${GOOGLE_REDIRECT_URI}&
+                response_type=code&
+                scope=email profile&
+                access_type=offline`;
+            
+            window.location.href = authUrl;
+        });
+        
+        // Login com Discord
+        document.getElementById('discordLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            const authUrl = `https://discord.com/api/oauth2/authorize?
+                client_id=${DISCORD_CLIENT_ID}&
+                redirect_uri=${DISCORD_REDIRECT_URI}&
+                response_type=code&
+                scope=identify email`;
+            
+            window.location.href = authUrl;
+        });
+        
         // Validação do formulário
-        const form = document.querySelector('.auth-form');
+        const form = document.querySelector('#loginForm');
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Adicione aqui a lógica de autenticação
-            console.log('Formulário enviado');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Aqui você adicionaria a lógica de autenticação normal
+            console.log('Tentativa de login com:', email, password);
+            // Simulação de login bem-sucedido
+            localStorage.setItem('authToken', 'simulated-token');
+            window.location.href = 'perfil.html';
         });
+        
+        // Verifica se há token (usuário já logado)
+        if (localStorage.getItem('authToken')) {
+            window.location.href = 'perfil.html';
+        }
     </script>
 </body>
 </html>
