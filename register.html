@@ -4,26 +4,328 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Purgatum RPG</title>
-    <!-- [Use o mesmo CSS do login.html] -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* Adicione estas regras extras para o formulário de registro */
-        .terms-conditions {
-            margin: 1.5rem 0;
-            font-size: 0.9rem;
+        :root {
+            --primary: #917d7d;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --light: #f0f0f0;
+            --gray: #333;
+            --input-bg: #1a1a1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+        
+        /* Navbar */
+        .auth-nav {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .auth-nav .logo img {
+            height: 70px;
+            transition: all 0.3s;
+        }
+        
+        .auth-nav .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+        
+        .auth-nav .back-home {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .auth-nav .back-home:hover {
+            color: var(--primary);
+        }
+        
+        /* Container Principal */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .auth-card {
+            background-color: var(--darker);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--gray);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--primary);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+        
+        .auth-header p {
+            color: #aaa;
+            font-size: 1rem;
+        }
+        
+        /* Formulário */
+        .auth-form .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .auth-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ccc;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .auth-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(145, 125, 125, 0.3);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
             color: #777;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+        
+        .terms-conditions {
+            margin: 1.8rem 0;
+            font-size: 0.9rem;
+            color: #aaa;
+            display: flex;
+            align-items: center;
         }
         
         .terms-conditions input {
             width: auto;
-            margin-right: 0.5rem;
+            margin-right: 0.8rem;
+            accent-color: var(--primary);
+        }
+        
+        .terms-conditions a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .terms-conditions a:hover {
+            text-decoration: underline;
+        }
+        
+        .auth-btn {
+            background-color: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .auth-btn:hover {
+            background-color: #a58e8e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.8rem 0;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .divider::before {
+            margin-right: 1rem;
+        }
+        
+        .divider::after {
+            margin-left: 1rem;
+        }
+        
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--input-bg);
+            color: var(--light);
+            transition: all 0.3s;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border: 1px solid var(--gray);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .social-btn.google:hover {
+            background-color: #4285F4;
+            border-color: #4285F4;
+        }
+        
+        .social-btn.discord:hover {
+            background-color: #5865F2;
+            border-color: #5865F2;
+        }
+        
+        .social-btn.facebook:hover {
+            background-color: #1877F2;
+            border-color: #1877F2;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            font-size: 0.9rem;
+            color: #777;
+            border-top: 1px solid var(--gray);
+        }
+        
+        .auth-footer p {
+            margin: 0;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 1.8rem;
+            color: #777;
+            font-size: 0.95rem;
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 1.8rem;
+            }
+            
+            .auth-nav {
+                padding: 1.2rem;
+            }
+            
+            .auth-nav .logo img {
+                height: 60px;
+            }
+            
+            .auth-header h1 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar (igual ao login) -->
+    <!-- Navbar -->
     <nav class="auth-nav">
         <div class="logo">
-            <img src="assets/logo-purgatum.webp" alt="Purgatum RPG">
+            <img src="logo-purgatum.webp" alt="Purgatum RPG">
         </div>
         <a href="index.html" class="back-home">
             <i class="fas fa-arrow-left"></i> Voltar ao site
@@ -38,7 +340,7 @@
                 <p>Junte-se à comunidade Purgatum</p>
             </div>
             
-            <form class="auth-form">
+            <form class="auth-form" id="registerForm">
                 <div class="form-group">
                     <label for="username">Nome de usuário</label>
                     <input type="text" id="username" placeholder="purgatum_player" required>
@@ -52,13 +354,17 @@
                 <div class="form-group">
                     <label for="password">Senha</label>
                     <input type="password" id="password" placeholder="••••••••" required>
-                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    <button type="button" class="password-toggle" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
                 
                 <div class="form-group">
                     <label for="confirm-password">Confirme sua senha</label>
                     <input type="password" id="confirm-password" placeholder="••••••••" required>
-                    <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+                    <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
                 
                 <div class="terms-conditions">
@@ -71,25 +377,25 @@
                 <div class="divider">ou</div>
                 
                 <div class="social-login">
-                    <a href="#" class="social-btn" title="Registrar com Google">
+                    <a href="#" class="social-btn google" title="Registrar com Google">
                         <i class="fab fa-google"></i>
                     </a>
-                    <a href="#" class="social-btn" title="Registrar com Discord">
+                    <a href="#" class="social-btn discord" title="Registrar com Discord">
                         <i class="fab fa-discord"></i>
                     </a>
-                    <a href="#" class="social-btn" title="Registrar com Facebook">
+                    <a href="#" class="social-btn facebook" title="Registrar com Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
                 </div>
             </form>
             
-            <p style="text-align: center; margin-top: 1.5rem; color: #777;">
-                Já tem uma conta? <a href="login.html" class="auth-link">Faça login</a>
+            <p class="login-link">
+                Já tem uma conta? <a href="login.html">Faça login</a>
             </p>
         </div>
     </div>
     
-    <!-- Rodapé (igual ao login) -->
+    <!-- Rodapé -->
     <footer class="auth-footer">
         <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
     </footer>
@@ -98,17 +404,21 @@
         // Mostrar/ocultar senha
         document.querySelectorAll('.password-toggle').forEach(toggle => {
             toggle.addEventListener('click', function() {
-                const inputId = this.id === 'togglePassword' ? 'password' : 'confirm-password';
-                const input = document.getElementById(inputId);
-                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                input.setAttribute('type', type);
-                this.classList.toggle('fa-eye-slash');
+                const input = this.parentElement.querySelector('input');
+                const icon = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                }
             });
         });
         
         // Validação do formulário
-        const form = document.querySelector('.auth-form');
-        form.addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Validação básica de senha
@@ -120,8 +430,27 @@
                 return;
             }
             
-            // Adicione aqui a lógica de registro
-            console.log('Formulário de registro enviado');
+            if (!document.getElementById('terms').checked) {
+                alert('Você deve aceitar os termos e condições');
+                return;
+            }
+            
+            // Simulação de registro bem-sucedido
+            console.log('Registro enviado com:', {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value
+            });
+            
+            // Redirecionar após registro
+            localStorage.setItem('authToken', 'simulated-token');
+            window.location.href = 'index.html';
+        });
+
+        // Login social (opcional)
+        document.querySelector('.social-btn.google').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Implemente a lógica do Google OAuth aqui
+            alert('Login com Google será implementado');
         });
     </script>
 </body>
