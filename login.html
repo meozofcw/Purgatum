@@ -353,16 +353,25 @@ const DISCORD_REDIRECT_URI = encodeURIComponent('https://purgatum-rpg.netlify.ap
         });
         
         // Login com Google
-        document.getElementById('googleLogin').addEventListener('click', function(e) {
-            e.preventDefault();
-            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?
-                client_id=${GOOGLE_CLIENT_ID}&
-                redirect_uri=${GOOGLE_REDIRECT_URI}&
-                response_type=code&
-                scope=email profile&
-                access_type=offline`;
-            
-            window.location.href = authUrl;
+       document.getElementById('googleLogin').addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  // 1. Configurações dinâmicas para dev/prod
+  const isLocalhost = window.location.hostname === 'localhost';
+  const clientId = isLocalhost 
+    ? 'SEU_CLIENT_ID_DEV_GOOGLE' 
+    : process.env.GOOGLE_CLIENT_ID || 'SEU_CLIENT_ID_PROD_GOOGLE';
+  
+  const redirectUri = isLocalhost
+    ? encodeURIComponent('http://localhost:8888/auth/google/callback')
+    : encodeURIComponent('https://seusite.netlify.app/auth/google/callback');
+
+  // 2. Construa a URL SEM quebras de linha
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email%20profile&access_type=offline`;
+  
+  // 3. Redirecione
+  window.location.href = authUrl;
+});
         });
         
         // Login com Discord
