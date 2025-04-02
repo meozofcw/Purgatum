@@ -1,12 +1,20 @@
 exports.handler = async (event) => {
     const { code } = event.queryStringParameters;
-    
-    const params = new URLSearchParams();
-    params.append('code', code);
-    params.append('client_id', process.env.GOOGLE_CLIENT_ID);
-    params.append('client_secret', process.env.GOOGLE_CLIENT_SECRET);
-    params.append('redirect_uri', process.env.GOOGLE_REDIRECT_URI);
-    params.append('grant_type', 'authorization_code');
+    const redirectUri = 'https://purgatumrpg.netlify.app/.netlify/functions/google-auth-callback';
+
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            code,
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code'
+        })
+    });
+    // ... resto do código
+};
 
     try {
         const response = await fetch('https://oauth2.googleapis.com/token', {
