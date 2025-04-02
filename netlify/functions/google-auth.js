@@ -1,17 +1,15 @@
-const fetch = require('node-fetch');
-
+// google-auth.js
 exports.handler = async (event) => {
+  // No Netlify Functions, não precisamos do require('node-fetch')
+  // pois o ambiente já tem fetch disponível globalmente
+  
   const { code } = JSON.parse(event.body);
   
   const params = new URLSearchParams();
   params.append('code', code);
   params.append('client_id', process.env.GOOGLE_CLIENT_ID);
   params.append('client_secret', process.env.GOOGLE_CLIENT_SECRET);
-  params.append('redirect_uri', 
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8888/auth/google/callback'
-      : 'https://seusite.netlify.app/auth/google/callback'
-  );
+  params.append('redirect_uri', process.env.GOOGLE_REDIRECT_URI);
   params.append('grant_type', 'authorization_code');
 
   try {
@@ -23,14 +21,20 @@ exports.handler = async (event) => {
       body: params
     });
     
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error_description || 'Falha na autenticação com Google');
+    }
+    
     return {
       statusCode: 200,
-      body: JSON.stringify(await response.json())
+      body: JSON.stringify(data)
     };
   } catch (error) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Falha na autenticação' })
+      body: JSON.stringify({ error: error.message })
     };
   }
 };
