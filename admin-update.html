@@ -2,89 +2,255 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Atualizações</title>
+    <title>Admin Atualizações - Purgatum RPG</title>
+    <!-- Adicione esses links no <head> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input, textarea { width: 100%; padding: 8px; }
-        textarea { height: 100px; }
-        button { padding: 10px 15px; background: #917d7d; color: white; border: none; cursor: pointer; }
-        #features-container div { margin-bottom: 10px; }
+        .feature-item { margin-bottom: 10px; }
+        .update-card { margin-bottom: 20px; border-left: 4px solid #917d7d; }
     </style>
 </head>
-<body>
-    <h1>Editor de Atualizações</h1>
-    
-    <form id="updateForm">
-        <div class="form-group">
-            <label>Versão:</label>
-            <input type="text" id="version" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Data:</label>
-            <input type="text" id="date" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Título:</label>
-            <input type="text" id="title" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Descrição:</label>
-            <textarea id="description" required></textarea>
-        </div>
-        
-        <div class="form-group">
-            <label>Novos Recursos/Correções:</label>
-            <div id="features-container">
-                <!-- Features serão adicionadas aqui -->
+<body class="bg-dark text-light">
+    <div class="container py-5">
+        <!-- Área de Login (inicialmente visível) -->
+        <div id="loginArea" class="text-center">
+            <h2 class="mb-4">🔒 Acesso Restrito</h2>
+            <div class="card bg-secondary text-dark p-4 mx-auto" style="max-width: 400px;">
+                <input type="email" id="loginEmail" class="form-control mb-3" placeholder="Seu email">
+                <input type="password" id="loginPassword" class="form-control mb-3" placeholder="Sua senha">
+                <button id="loginBtn" class="btn btn-primary w-100">Entrar</button>
             </div>
-            <button type="button" id="addFeature">+ Adicionar Item</button>
         </div>
-        
-        <button type="submit">Salvar Atualização</button>
-    </form>
+
+        <!-- Painel Admin (inicialmente oculto) -->
+        <div id="adminPanel" style="display: none;">
+            <h1 class="text-center mb-5">📝 Painel de Atualizações</h1>
+            
+            <!-- Formulário para Nova Atualização -->
+            <div class="card bg-dark border-primary mb-5">
+                <div class="card-header bg-primary">
+                    <h3>➕ Adicionar Nova Atualização</h3>
+                </div>
+                <div class="card-body">
+                    <form id="updateForm">
+                        <div class="mb-3">
+                            <label class="form-label">Versão:</label>
+                            <input type="text" id="version" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Data:</label>
+                            <input type="text" id="date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Título:</label>
+                            <input type="text" id="title" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição:</label>
+                            <textarea id="description" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Itens da Atualização:</label>
+                            <div id="featuresContainer">
+                                <!-- Itens serão adicionados aqui -->
+                            </div>
+                            <button type="button" id="addFeatureBtn" class="btn btn-sm btn-outline-light mt-2">
+                                ➕ Adicionar Item
+                            </button>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mt-3">Salvar Atualização</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de Atualizações Existentes -->
+            <h3 class="mb-4">📋 Atualizações Cadastradas</h3>
+            <div id="updatesList">
+                <!-- Atualizações serão carregadas aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Adicione esses scripts no final do <body> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     
     <script>
-        document.getElementById('addFeature').addEventListener('click', () => {
-            const container = document.getElementById('features-container');
+        // Configuração do Firebase (substitua com seus dados)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicialize o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Elementos da UI
+        const loginArea = document.getElementById('loginArea');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginBtn = document.getElementById('loginBtn');
+        const addFeatureBtn = document.getElementById('addFeatureBtn');
+        const featuresContainer = document.getElementById('featuresContainer');
+        const updateForm = document.getElementById('updateForm');
+        const updatesList = document.getElementById('updatesList');
+
+        // Adicionar campo de item
+        addFeatureBtn.addEventListener('click', () => {
             const div = document.createElement('div');
+            div.className = 'feature-item d-flex gap-2 mb-2';
             div.innerHTML = `
-                <input type="text" class="feature-input" placeholder="Novo recurso/correção">
-                <button type="button" class="remove-feature">Remover</button>
+                <input type="text" class="form-control feature-input" placeholder="Novo recurso/correção">
+                <button type="button" class="btn btn-danger remove-feature">×</button>
             `;
-            container.appendChild(div);
+            featuresContainer.appendChild(div);
             
             div.querySelector('.remove-feature').addEventListener('click', () => {
                 div.remove();
             });
         });
-        
-        document.getElementById('updateForm').addEventListener('submit', (e) => {
+
+        // Login
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    loginArea.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    loadUpdates();
+                })
+                .catch(error => {
+                    alert('Erro ao logar: ' + error.message);
+                });
+        });
+
+        // Carregar atualizações existentes
+        function loadUpdates() {
+            updatesList.innerHTML = '<p>Carregando...</p>';
+            
+            db.collection('updates').orderBy('date', 'desc').get()
+                .then(snapshot => {
+                    updatesList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        updatesList.innerHTML = '<p>Nenhuma atualização cadastrada ainda.</p>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        const update = doc.data();
+                        const card = document.createElement('div');
+                        card.className = 'card update-card bg-secondary text-light mb-3';
+                        card.innerHTML = `
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5>${update.title} <span class="badge bg-primary">${update.version}</span></h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-warning edit-btn" data-id="${doc.id}">✏️</button>
+                                        <button class="btn btn-sm btn-danger delete-btn" data-id="${doc.id}">🗑️</button>
+                                    </div>
+                                </div>
+                                <p class="text-muted"><small>${update.date}</small></p>
+                                <p>${update.description}</p>
+                                <ul>
+                                    ${update.features.map(f => `<li>${f}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                        updatesList.appendChild(card);
+                        
+                        // Adiciona eventos aos botões
+                        card.querySelector('.delete-btn').addEventListener('click', () => deleteUpdate(doc.id));
+                        card.querySelector('.edit-btn').addEventListener('click', () => editUpdate(doc.id, update));
+                    });
+                })
+                .catch(error => {
+                    console.error("Erro ao carregar: ", error);
+                    updatesList.innerHTML = '<p class="text-danger">Erro ao carregar atualizações.</p>';
+                });
+        }
+
+        // Salvar nova atualização
+        updateForm.addEventListener('submit', e => {
             e.preventDefault();
             
             const features = Array.from(document.querySelectorAll('.feature-input'))
                 .map(input => input.value)
                 .filter(value => value.trim() !== '');
             
-            const update = {
+            const newUpdate = {
                 version: document.getElementById('version').value,
                 date: document.getElementById('date').value,
                 title: document.getElementById('title').value,
                 description: document.getElementById('description').value,
-                features: features
+                features: features,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
-            // Aqui você pode adicionar a lógica para salvar no JSON
-            console.log('Nova atualização:', update);
-            alert('Atualização salva (no console)');
+            db.collection('updates').add(newUpdate)
+                .then(() => {
+                    alert('Atualização salva com sucesso!');
+                    updateForm.reset();
+                    featuresContainer.innerHTML = '';
+                    loadUpdates();
+                })
+                .catch(error => {
+                    alert('Erro ao salvar: ' + error.message);
+                });
+        });
+
+        // Funções auxiliares
+        function deleteUpdate(id) {
+            if (confirm('Tem certeza que deseja excluir esta atualização?')) {
+                db.collection('updates').doc(id).delete()
+                    .then(() => {
+                        alert('Atualização excluída!');
+                        loadUpdates();
+                    });
+            }
+        }
+
+        function editUpdate(id, update) {
+            document.getElementById('version').value = update.version;
+            document.getElementById('date').value = update.date;
+            document.getElementById('title').value = update.title;
+            document.getElementById('description').value = update.description;
             
-            // Limpar formulário
-            document.getElementById('updateForm').reset();
-            document.getElementById('features-container').innerHTML = '';
+            featuresContainer.innerHTML = '';
+            update.features.forEach(feature => {
+                const div = document.createElement('div');
+                div.className = 'feature-item d-flex gap-2 mb-2';
+                div.innerHTML = `
+                    <input type="text" class="form-control feature-input" value="${feature}">
+                    <button type="button" class="btn btn-danger remove-feature">×</button>
+                `;
+                featuresContainer.appendChild(div);
+                
+                div.querySelector('.remove-feature').addEventListener('click', () => {
+                    div.remove();
+                });
+            });
+            
+            window.scrollTo(0, 0);
+        }
+
+        // Verifica se usuário está logado ao carregar a página
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loginArea.style.display = 'none';
+                adminPanel.style.display = 'block';
+                loadUpdates();
+            }
         });
     </script>
 </body>
