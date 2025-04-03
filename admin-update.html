@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Atualizações</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 8px; }
+        textarea { height: 100px; }
+        button { padding: 10px 15px; background: #917d7d; color: white; border: none; cursor: pointer; }
+        #features-container div { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Editor de Atualizações</h1>
+    
+    <form id="updateForm">
+        <div class="form-group">
+            <label>Versão:</label>
+            <input type="text" id="version" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Data:</label>
+            <input type="text" id="date" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Título:</label>
+            <input type="text" id="title" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Descrição:</label>
+            <textarea id="description" required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Novos Recursos/Correções:</label>
+            <div id="features-container">
+                <!-- Features serão adicionadas aqui -->
+            </div>
+            <button type="button" id="addFeature">+ Adicionar Item</button>
+        </div>
+        
+        <button type="submit">Salvar Atualização</button>
+    </form>
+    
+    <script>
+        document.getElementById('addFeature').addEventListener('click', () => {
+            const container = document.getElementById('features-container');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <input type="text" class="feature-input" placeholder="Novo recurso/correção">
+                <button type="button" class="remove-feature">Remover</button>
+            `;
+            container.appendChild(div);
+            
+            div.querySelector('.remove-feature').addEventListener('click', () => {
+                div.remove();
+            });
+        });
+        
+        document.getElementById('updateForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const features = Array.from(document.querySelectorAll('.feature-input'))
+                .map(input => input.value)
+                .filter(value => value.trim() !== '');
+            
+            const update = {
+                version: document.getElementById('version').value,
+                date: document.getElementById('date').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                features: features
+            };
+            
+            // Aqui você pode adicionar a lógica para salvar no JSON
+            console.log('Nova atualização:', update);
+            alert('Atualização salva (no console)');
+            
+            // Limpar formulário
+            document.getElementById('updateForm').reset();
+            document.getElementById('features-container').innerHTML = '';
+        });
+    </script>
+</body>
+</html>
