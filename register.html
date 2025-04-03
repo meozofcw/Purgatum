@@ -16,7 +16,6 @@
             --light-gray: #aaa;
             --gray: #333;
             --input-bg: #1a1a1a;
-            --success: #4caf50;
         }
         
         * {
@@ -362,7 +361,8 @@
     <!-- Navbar -->
     <nav class="auth-nav">
         <div class="logo">
-            <img src="assets/logo-purgatum.webp" alt="Purgatum RPG">
+            <!-- Verifique o caminho correto da sua logo -->
+            <img src="logo-purgatum.webp" alt="Purgatum RPG" onerror="this.src='placeholder-logo.png'">
         </div>
         <a href="index.html" class="back-home">
             <i class="fas fa-arrow-left"></i> Voltar ao site
@@ -434,95 +434,110 @@
         <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
     </footer>
     
-    <script>
+    <script type="text/javascript">
+        // Verificação de carregamento
+        console.log('Script de registro iniciado');
+        
         // Mostrar/ocultar senha
-       <script>
-    // Mostrar/ocultar senha (manter igual)
-    document.querySelectorAll('.password-toggle').forEach(toggle => {
-        toggle.addEventListener('click', function() {
-            const input = this.parentElement.querySelector('input');
-            const icon = this.querySelector('i');
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        });
-    });
-    <script>
-    // Validação do formulário (manter igual)
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        
-        if (password !== confirmPassword) {
-            alert('As senhas não coincidem!');
-            return;
+        function setupPasswordToggle() {
+            document.querySelectorAll('.password-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const input = this.parentElement.querySelector('input');
+                    const icon = this.querySelector('i');
+                    
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.replace('fa-eye', 'fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.replace('fa-eye-slash', 'fa-eye');
+                    }
+                });
+            });
         }
         
-        if (!document.getElementById('terms').checked) {
-            alert('Você deve aceitar os termos e condições');
-            return;
+        // Validação do formulário
+        function setupFormValidation() {
+            const form = document.getElementById('registerForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                
+                if (password !== confirmPassword) {
+                    alert('As senhas não coincidem!');
+                    return;
+                }
+                
+                if (!document.getElementById('terms').checked) {
+                    alert('Você deve aceitar os termos e condições');
+                    return;
+                }
+                
+                console.log('Registro enviado com:', {
+                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value
+                });
+                
+                localStorage.setItem('authToken', 'simulated-token');
+                window.location.href = 'index.html';
+            });
         }
         
-        console.log('Registro enviado com:', {
-            username: document.getElementById('username').value,
-            email: document.getElementById('email').value
-        });
+        // Configuração dos botões sociais
+        function setupSocialButtons() {
+            // Google
+            document.getElementById('googleRegister').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Iniciando autenticação com Google');
+                
+                const clientId = '771240663995-d95o486e7709iqekmm2nrtni676l5j5q.apps.googleusercontent.com';
+                const redirectUri = encodeURIComponent(
+                    'https://purgatumrpg.netlify.app/.netlify/functions/google-auth-callback'
+                );
+                
+                const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                               `client_id=${clientId}&` +
+                               `redirect_uri=${redirectUri}&` +
+                               `response_type=code&` +
+                               `scope=email%20profile&` +
+                               `access_type=offline&` +
+                               `prompt=consent`;
+                
+                console.log('Redirecionando para:', authUrl);
+                window.location.href = authUrl;
+            });
+            
+            // Discord
+            document.getElementById('discordRegister').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Iniciando autenticação com Discord');
+                
+                const clientId = '1356631375255572713';
+                const redirectUri = encodeURIComponent(
+                    'https://purgatumrpg.netlify.app/.netlify/functions/discord-auth-callback'
+                );
+                
+                const authUrl = `https://discord.com/api/oauth2/authorize?` +
+                               `client_id=${clientId}&` +
+                               `redirect_uri=${redirectUri}&` +
+                               `response_type=code&` +
+                               `scope=identify%20email`;
+                
+                console.log('Redirecionando para:', authUrl);
+                window.location.href = authUrl;
+            });
+        }
         
-        localStorage.setItem('authToken', 'simulated-token');
-        window.location.href = 'index.html';
-    });
-
-    // CORREÇÃO PARA OS BOTÕES SOCIAIS - ADICIONE ESTE CÓDIGO
-    document.addEventListener('DOMContentLoaded', function() {
-        // Login com Google
-        document.getElementById('googleRegister').addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Botão Google clicado!'); // Debug
-            
-            const clientId = '771240663995-d95o486e7709iqekmm2nrtni676l5j5q.apps.googleusercontent.com';
-            const redirectUri = encodeURIComponent(
-                'https://purgatumrpg.netlify.app/.netlify/functions/google-auth-callback'
-            );
-            
-            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                           `client_id=${clientId}&` +
-                           `redirect_uri=${redirectUri}&` +
-                           `response_type=code&` +
-                           `scope=email%20profile&` +
-                           `access_type=offline&` +
-                           `prompt=consent`;
-            
-            console.log('Redirecionando para:', authUrl); // Debug
-            window.location.href = authUrl;
+        // Inicialização quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM completamente carregado');
+            setupPasswordToggle();
+            setupFormValidation();
+            setupSocialButtons();
         });
-
-        // Login com Discord
-        document.getElementById('discordRegister').addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Botão Discord clicado!'); // Debug
-            
-            const clientId = '1356631375255572713';
-            const redirectUri = encodeURIComponent(
-                'https://purgatumrpg.netlify.app/.netlify/functions/discord-auth-callback'
-            );
-            
-            const authUrl = `https://discord.com/api/oauth2/authorize?` +
-                           `client_id=${clientId}&` +
-                           `redirect_uri=${redirectUri}&` +
-                           `response_type=code&` +
-                           `scope=identify%20email`;
-            
-            console.log('Redirecionando para:', authUrl); // Debug
-            window.location.href = authUrl;
-        });
-    });
-</script>
+    </script>
 </body>
 </html>
-               
