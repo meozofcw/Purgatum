@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizações - Purgatum RPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #917d7d;
+            --dark: #0a0a0a;
+            --light: #f0f0f0;
+            --gray: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* ============ NAVBAR ============ */
+        nav {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo img {
+            height: 70px;
+            transition: all 0.3s;
+        }
+        
+        .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .auth-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .login-btn {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .register-btn {
+            background-color: var(--primary);
+            border: 2px solid var(--primary);
+            color: var(--dark);
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        /* ============ PÁGINA DE ATUALIZAÇÕES ============ */
+        .updates-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .updates-timeline {
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .updates-timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+        }
+
+        .update-item {
+            position: relative;
+            margin-bottom: 3rem;
+            background: rgba(20, 20, 20, 0.8);
+            border-left: 3px solid var(--primary);
+            padding: 2rem;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .update-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .update-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 30px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--dark);
+        }
+
+        .update-date {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .update-date i {
+            font-size: 1.2rem;
+        }
+
+        .update-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--light);
+            margin-bottom: 1rem;
+        }
+
+        .update-content {
+            color: var(--light);
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .update-version {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .update-features {
+            margin-top: 1rem;
+            padding-left: 1rem;
+        }
+
+        .update-features li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            list-style-type: none;
+        }
+
+        .update-features li::before {
+            content: '➔';
+            color: var(--primary);
+            position: absolute;
+            left: -1.2rem;
+        }
+
+        /* ============ RODAPÉ ============ */
+        footer {
+            background-color: #000;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--gray);
+            color: var(--light);
+        }
+
+        /* ============ RESPONSIVO ============ */
+        @media (max-width: 768px) {
+            .updates-timeline {
+                padding-left: 30px;
+            }
+
+            .update-item {
+                padding: 1.5rem;
+            }
+
+            .update-item::before {
+                left: -23px;
+                width: 12px;
+                height: 12px;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+            }
+
+            .update-title {
+                font-size: 1.4rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============ NAVBAR ============ -->
+    <nav>
+        <div class="logo">
+            <img src="assets/logo-purgatum.webp" alt="Purgatum RPG">
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Início</a>
+            <a href="download.html">Downloads</a>
+            <a href="updates.html" class="active">Atualizações</a>
+            <a href="support.html">Nos Apoie</a>
+            <a href="sheet.html">Ficha</a>
+            <div class="auth-buttons">
+                <a href="register.html" class="auth-btn register-btn">Registre-se</a>
+                <a href="login.html" class="auth-btn login-btn">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ PÁGINA DE ATUALIZAÇÕES ============ -->
+    <div class="updates-container">
+        <h1 class="page-title">Atualizações</h1>
+        
+        <div class="updates-timeline">
+            <!-- Atualização mais recente -->
+            <div class="update-item">
+                <span class="update-version">v2.1.0</span>
+                <div class="update-date">
+                    <i class="far fa-calendar-alt"></i>
+                    15 de Novembro de 2023
+                </div>
+                <h2 class="update-title">Novo Sistema de Magia</h2>
+                <div class="update-content">
+                    <p>Introduzimos um sistema de magia completamente reformulado, com novas escolas arcanas e mais de 100 feitiços inéditos. O balanceamento das classes mágicas foi totalmente revisado.</p>
+                    <ul class="update-features">
+                        <li>5 novas escolas de magia</li>
+                        <li>Sistema de combinação de feitiços</li>
+                        <li>Interface de conjuração redesenhada</li>
+                        <li>Correção de bugs no sistema de mana</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Atualização anterior -->
+            <div class="update-item">
+                <span class="update-version">v2.0.3</span>
+                <div class="update-date">
+                    <i class="far fa-calendar-alt"></i>
+                    28 de Outubro de 2023
+                </div>
+                <h2 class="update-title">Melhorias na Ficha Digital</h2>
+                <div class="update-content">
+                    <p>Grande atualização da ficha digital com novos recursos e otimizações para mobile.</p>
+                    <ul class="update-features">
+                        <li>Design responsivo aprimorado</li>
+                        <li>Nova seção de histórico do personagem</li>
+                        <li>Exportação em PDF com novos templates</li>
+                        <li>Correção de 15 bugs reportados</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Atualização mais antiga -->
+            <div class="update-item">
+                <span class="update-version">v1.9.8</span>
+                <div class="update-date">
+                    <i class="far fa-calendar-alt"></i>
+                    10 de Setembro de 2023
+                </div>
+                <h2 class="update-title">Expansão do Bestiário</h2>
+                <div class="update-content">
+                    <p>Adicionamos 32 novas criaturas ao bestiário oficial, incluindo os temidos Dragões do Abismo.</p>
+                    <ul class="update-features">
+                        <li>Novas ilustrações em alta resolução</li>
+                        <li>Sistema de nidificação para criaturas</li>
+                        <li>Tabelas de saque atualizadas</li>
+                        <li>IA de combate aprimorada</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ RODAPÉ ============ -->
+    <footer>
+        <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Substitua o conteúdo do <script> por isso:
+
+// Configuração do Firebase (mesma do admin)
+const firebaseConfig = {
+    apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+    authDomain: "purgatum-rpg-admin.firebaseapp.com",
+    projectId: "purgatum-rpg-admin",
+    storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+    messagingSenderId: "274276091155",
+    appId: "1:274276091155:web:71129a94e8a13d194246e6"
+};
+
+// Inicialize o Firebase (SEM autenticação)
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Carrega as atualizações
+db.collection("updates").orderBy("date", "desc").get()
+    .then((querySnapshot) => {
+        const timeline = document.getElementById("updatesTimeline");
+        timeline.innerHTML = "";
+        
+        querySnapshot.forEach((doc) => {
+            const update = doc.data();
+            const featuresHTML = update.features.map(f => `<li>${f}</li>`).join("");
+            
+            timeline.innerHTML += `
+                <div class="update-item">
+                    <span class="update-version">${update.version}</span>
+                    <div class="update-date">
+                        <i class="far fa-calendar-alt"></i>
+                        ${update.date}
+                    </div>
+                    <h2 class="update-title">${update.title}</h2>
+                    <div class="update-content">
+                        <p>${update.description}</p>
+                        <ul class="update-features">${featuresHTML}</ul>
+                    </div>
+                </div>
+            `;
+        });
+    })
+    .catch((error) => {
+        console.log("Erro ao carregar atualizações:", error);
+    });
+    </script>
+</body>
+</html>
