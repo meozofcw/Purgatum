@@ -95,6 +95,7 @@
             max-width: 1200px;
             margin: 4rem auto;
             padding: 0 2rem;
+            color: var(--light);
         }
 
         .page-title {
@@ -270,62 +271,10 @@
     <div class="updates-container">
         <h1 class="page-title">Atualizações</h1>
         
-        <div class="updates-timeline">
-            <!-- Atualização mais recente -->
-            <div class="update-item">
-                <span class="update-version">v2.1.0</span>
-                <div class="update-date">
-                    <i class="far fa-calendar-alt"></i>
-                    15 de Novembro de 2023
-                </div>
-                <h2 class="update-title">Novo Sistema de Magia</h2>
-                <div class="update-content">
-                    <p>Introduzimos um sistema de magia completamente reformulado, com novas escolas arcanas e mais de 100 feitiços inéditos. O balanceamento das classes mágicas foi totalmente revisado.</p>
-                    <ul class="update-features">
-                        <li>5 novas escolas de magia</li>
-                        <li>Sistema de combinação de feitiços</li>
-                        <li>Interface de conjuração redesenhada</li>
-                        <li>Correção de bugs no sistema de mana</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Atualização anterior -->
-            <div class="update-item">
-                <span class="update-version">v2.0.3</span>
-                <div class="update-date">
-                    <i class="far fa-calendar-alt"></i>
-                    28 de Outubro de 2023
-                </div>
-                <h2 class="update-title">Melhorias na Ficha Digital</h2>
-                <div class="update-content">
-                    <p>Grande atualização da ficha digital com novos recursos e otimizações para mobile.</p>
-                    <ul class="update-features">
-                        <li>Design responsivo aprimorado</li>
-                        <li>Nova seção de histórico do personagem</li>
-                        <li>Exportação em PDF com novos templates</li>
-                        <li>Correção de 15 bugs reportados</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Atualização mais antiga -->
-            <div class="update-item">
-                <span class="update-version">v1.9.8</span>
-                <div class="update-date">
-                    <i class="far fa-calendar-alt"></i>
-                    10 de Setembro de 2023
-                </div>
-                <h2 class="update-title">Expansão do Bestiário</h2>
-                <div class="update-content">
-                    <p>Adicionamos 32 novas criaturas ao bestiário oficial, incluindo os temidos Dragões do Abismo.</p>
-                    <ul class="update-features">
-                        <li>Novas ilustrações em alta resolução</li>
-                        <li>Sistema de nidificação para criaturas</li>
-                        <li>Tabelas de saque atualizadas</li>
-                        <li>IA de combate aprimorada</li>
-                    </ul>
-                </div>
+        <div class="updates-timeline" id="updatesTimeline">
+            <!-- As atualizações serão carregadas aqui pelo JavaScript -->
+            <div class="loading-message">
+                <p>Carregando atualizações...</p>
             </div>
         </div>
     </div>
@@ -335,52 +284,106 @@
         <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
     </footer>
 
+    <!-- Firebase SDK (DEVE vir antes do seu script) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+
+    <!-- Seu script JavaScript -->
     <script>
-        // Substitua o conteúdo do <script> por isso:
+        // Configuração do Firebase (SUBSTITUA com suas credenciais)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY_AQUI",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
-// Configuração do Firebase (mesma do admin)
-const firebaseConfig = {
-    apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
-    authDomain: "purgatum-rpg-admin.firebaseapp.com",
-    projectId: "purgatum-rpg-admin",
-    storageBucket: "purgatum-rpg-admin.firebasestorage.app",
-    messagingSenderId: "274276091155",
-    appId: "1:274276091155:web:71129a94e8a13d194246e6"
-};
+        // Inicialização do Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-// Inicialize o Firebase (SEM autenticação)
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// Carrega as atualizações
-db.collection("updates").orderBy("date", "desc").get()
-    .then((querySnapshot) => {
-        const timeline = document.getElementById("updatesTimeline");
-        timeline.innerHTML = "";
-        
-        querySnapshot.forEach((doc) => {
-            const update = doc.data();
-            const featuresHTML = update.features.map(f => `<li>${f}</li>`).join("");
+        // Função para carregar as atualizações
+        function loadUpdates() {
+            const updatesTimeline = document.getElementById('updatesTimeline');
             
-            timeline.innerHTML += `
-                <div class="update-item">
-                    <span class="update-version">${update.version}</span>
-                    <div class="update-date">
-                        <i class="far fa-calendar-alt"></i>
-                        ${update.date}
-                    </div>
-                    <h2 class="update-title">${update.title}</h2>
-                    <div class="update-content">
-                        <p>${update.description}</p>
-                        <ul class="update-features">${featuresHTML}</ul>
-                    </div>
-                </div>
-            `;
+            db.collection("updates").orderBy("date", "desc").get()
+                .then((querySnapshot) => {
+                    updatesTimeline.innerHTML = ''; // Limpa o conteúdo anterior
+                    
+                    if (querySnapshot.empty) {
+                        updatesTimeline.innerHTML = '<p>Nenhuma atualização disponível no momento.</p>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach((doc) => {
+                        const update = doc.data();
+                        const featuresList = update.features.map(feature => 
+                            `<li>${feature}</li>`
+                        ).join('');
+                        
+                        const updateItem = `
+                            <div class="update-item">
+                                <span class="update-version">${update.version}</span>
+                                <div class="update-date">
+                                    <i class="far fa-calendar-alt"></i>
+                                    ${update.date}
+                                </div>
+                                <h2 class="update-title">${update.title}</h2>
+                                <div class="update-content">
+                                    <p>${update.description}</p>
+                                    <ul class="update-features">${featuresList}</ul>
+                                </div>
+                            </div>
+                        `;
+                        
+                        updatesTimeline.insertAdjacentHTML('beforeend', updateItem);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar atualizações:", error);
+                    updatesTimeline.innerHTML = '<p>Erro ao carregar as atualizações. Recarregue a página ou tente novamente mais tarde.</p>';
+                });
+        }
+
+        // Verificação de autenticação (opcional)
+        function checkAuth() {
+            const auth = firebase.auth();
+            const authButtons = document.querySelector('.auth-buttons');
+            
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Usuário logado
+                    authButtons.innerHTML = `
+                        <a href="profile.html" class="auth-btn login-btn">Perfil</a>
+                        <a href="#" id="logout" class="auth-btn register-btn">Sair</a>
+                    `;
+                    
+                    document.getElementById('logout').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        auth.signOut().then(() => {
+                            window.location.reload();
+                        });
+                    });
+                }
+            });
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUpdates();
+            checkAuth();
+            
+            // Destacar link ativo na navbar
+            const currentPage = window.location.pathname.split('/').pop();
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
         });
-    })
-    .catch((error) => {
-        console.log("Erro ao carregar atualizações:", error);
-    });
     </script>
 </body>
 </html>
