@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Apoie - Purgatum RPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #917d7d;
+            --dark: #0a0a0a;
+            --light: #f0f0f0;
+            --gray: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+        }
+        
+        /* ============ NAVBAR ============ */
+        nav {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo img {
+            height: 70px;
+            transition: all 0.3s;
+        }
+        
+        .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .auth-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .login-btn {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .register-btn {
+            background-color: var(--primary);
+            border: 2px solid var(--primary);
+            color: var(--dark);
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        /* ============ PÁGINA DE APOIO ============ */
+        .support-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('assets/support-bg.jpg') no-repeat center/cover;
+            padding: 8rem 2rem;
+            text-align: center;
+        }
+        
+        .support-hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .support-hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+        
+        .support-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+        
+        .support-section {
+            margin-bottom: 5rem;
+        }
+        
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+            margin: 1rem auto;
+        }
+        
+        .support-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .support-card {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(145, 125, 125, 0.3);
+        }
+        
+        .support-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            border-color: var(--primary);
+        }
+        
+        .support-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .support-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .support-card p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .support-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .support-btn:hover {
+            background: #a58e8e;
+            transform: translateY(-3px);
+        }
+        
+        .benefits-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            background: rgba(30, 30, 30, 0.5);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .benefit-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 1.5rem;
+            margin-top: 0.3rem;
+        }
+        
+        .benefit-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        /* ============ RODAPÉ ============ */
+        footer {
+            background-color: #000;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--gray);
+        }
+
+        /* ============ RESPONSIVO ============ */
+        @media (max-width: 768px) {
+            .support-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .support-hero {
+                padding: 5rem 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============ NAVBAR ============ -->
+    <nav>
+        <div class="logo">
+            <img src="assets/logo-purgatum.webp" alt="Purgatum RPG">
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Início</a>
+            <a href="download.html">Downloads</a>
+            <a href="updates.html">Atualizações</a>
+            <a href="support.html" class="active">Nos Apoie</a>
+            <a href="sheet.html">Ficha</a>
+            <div class="auth-buttons">
+                <a href="register.html" class="auth-btn register-btn">Registre-se</a>
+                <a href="login.html" class="auth-btn login-btn">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ HERO SECTION ============ -->
+    <section class="support-hero">
+        <h1>Apoie Purgatum RPG</h1>
+        <p>Sua contribuição ajuda a manter e expandir este mundo de trevas e mistérios. Juntos, podemos tornar Purgatum ainda mais épico!</p>
+    </section>
+
+    <!-- ============ PRINCIPAIS FORMAS DE APOIO ============ -->
+    <div class="support-container">
+        <section class="support-section">
+            <h2 class="section-title">Como Apoiar</h2>
+            <div class="support-cards">
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-donate"></i>
+                    </div>
+                    <h3>Doações</h3>
+                    <p>Apoie financeiramente o desenvolvimento contínuo de Purgatum RPG e ganhe recompensas exclusivas.</p>
+                    <a href="#donate" class="support-btn">Doar Agora</a>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Comunidade</h3>
+                    <p>Participe ativamente, divulgue para amigos e ajude a construir nossa comunidade.</p>
+                    <a href="#community" class="support-btn">Participar</a>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Contribua</h3>
+                    <p>Seja um colaborador ativo no desenvolvimento de regras, histórias ou código.</p>
+                    <a href="#contribute" class="support-btn">Contribuir</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ SEÇÃO DE DOAÇÕES ============ -->
+        <section id="donate" class="support-section">
+            <h2 class="section-title">Doações</h2>
+            <div class="support-cards">
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fab fa-pix"></i>
+                    </div>
+                    <h3>PIX</h3>
+                    <p>Doações únicas via PIX para apoiar diretamente o projeto.</p>
+                    <div class="pix-code">
+                        <p><strong>Chave PIX:</strong></p>
+                        <p class="pix-key">purgatumrpg@email.com</p>
+                        <button id="copyPix" class="support-btn">Copiar Chave</button>
+                    </div>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fab fa-patreon"></i>
+                    </div>
+                    <h3>Patreon</h3>
+                    <p>Apoie mensalmente e receba recompensas exclusivas como agradecimento.</p>
+                    <a href="https://patreon.com/purgatumrpg" target="_blank" class="support-btn">Apoiar no Patreon</a>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3>Recompensas</h3>
+                    <p>Conheça os benefícios exclusivos para apoiadores do projeto.</p>
+                    <a href="#rewards" class="support-btn">Ver Recompensas</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ BENEFÍCIOS PARA APOIADORES ============ -->
+        <section id="rewards" class="support-section">
+            <h2 class="section-title">Recompensas</h2>
+            <div class="benefits-list">
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Apoiador Bronze</h4>
+                        <p>Acesso antecipado a conteúdos, nome nos créditos e papel de parede exclusivo.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Apoiador Prata</h4>
+                        <p>Todos os benefícios Bronze + PDFs exclusivos, fichas de personagem premium e participação em enquetes.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Apoiador Ouro</h4>
+                        <p>Todos os benefícios Prata + acesso a conteúdo beta, menção especial nos créditos e possibilidade de sugerir NPCs.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Apoiador Lendário</h4>
+                        <p>Todos os benefícios Ouro + sessões exclusivas com os criadores, itens exclusivos no jogo e possibilidade de nomear locais no mundo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ OUTRAS FORMAS DE APOIAR ============ -->
+        <section id="community" class="support-section">
+            <h2 class="section-title">Outras Formas de Apoiar</h2>
+            <div class="support-cards">
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Divulgação</h3>
+                    <p>Compartilhe Purgatum RPG nas redes sociais e com seus amigos.</p>
+                    <div class="social-share">
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Contribuição Criativa</h3>
+                    <p>Envie suas ideias para histórias, personagens ou mecânicas de jogo.</p>
+                    <a href="mailto:contribuicoes@purgatumrpg.com" class="support-btn">Enviar Ideia</a>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <h3>Reportar Bugs</h3>
+                    <p>Ajudar a identificar e corrigir problemas é uma forma valiosa de contribuir.</p>
+                    <a href="https://github.com/purgatumrpg/issues" target="_blank" class="support-btn">Reportar Problema</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ============ RODAPÉ ============ -->
+    <footer>
+        <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Copiar chave PIX
+        document.getElementById('copyPix').addEventListener('click', () => {
+            const pixKey = document.querySelector('.pix-key').textContent;
+            navigator.clipboard.writeText(pixKey)
+                .then(() => {
+                    alert('Chave PIX copiada com sucesso!');
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar: ', err);
+                });
+        });
+
+        // Verificação de login (opcional)
+        const token = localStorage.getItem('token');
+        const authButtons = document.querySelector('.auth-buttons');
+        
+        if (token) {
+            authButtons.innerHTML = `
+                <a href="profile.html" class="auth-btn login-btn">Perfil</a>
+                <a href="#" id="logout" class="auth-btn register-btn">Sair</a>
+            `;
+            
+            document.getElementById('logout').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
