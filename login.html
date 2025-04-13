@@ -266,6 +266,42 @@
                 gap: 1rem;
             }
         }
+        
+        /* Mensagens de erro */
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary-color);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -291,6 +327,7 @@
                 <div class="form-group">
                     <label for="email">E-mail</label>
                     <input type="email" id="email" placeholder="seu@email.com" required>
+                    <div id="emailError" class="error-message"></div>
                 </div>
                 
                 <div class="form-group">
@@ -299,6 +336,7 @@
                     <button type="button" class="password-toggle" id="togglePassword">
                         <i class="fas fa-eye"></i>
                     </button>
+                    <div id="passwordError" class="error-message"></div>
                 </div>
                 
                 <div class="auth-actions">
@@ -334,31 +372,44 @@
     <footer class="auth-footer">
         <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
     </footer>
-      <!-- Adicione este script antes do fechamento do body -->
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
     <script>
-        // Configuração do Firebase
+        // Configuração do Firebase - Substitua com suas credenciais
         const firebaseConfig = {
-            apiKey: "AIzaSyBq5VNoq5Xq5Xq5Xq5Xq5Xq5Xq5Xq5Xq5X",
-            authDomain: "purgatumrpg.firebaseapp.com",
-            projectId: "purgatumrpg",
-            storageBucket: "purgatumrpg.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcd1234efgh5678ijkl90"
+       apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+       authDomain: "purgatum-rpg-admin.firebaseapp.com",
+       projectId: "purgatum-rpg-admin",
+       storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+       messagingSenderId: "274276091155",
+       appId: "1:274276091155:web:71129a94e8a13d194246e6"
         };
 
         // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
-
-        // Configuração do provedor Discord
-        const discordProvider = new firebase.auth.OAuthProvider('oidc.discord');
-        discordProvider.setCustomParameters({
-            client_id: "1356631375255572713",
-            redirect_uri: window.location.origin + '/__/auth/handler',
-            scope: 'identify email'
-        });
-
+        
+        // Referência para o Firestore
+        const db = firebase.firestore();
+        
+        // Mostrar loading
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+        
+        // Esconder loading
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
         // Mostrar/ocultar senha
         document.getElementById('togglePassword').addEventListener('click', function() {
             const password = document.getElementById('password');
@@ -372,145 +423,176 @@
                 icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         });
-
-        // Login com Google (atualizado para Firebase)
-        document.getElementById('googleLogin').addEventListener('click', function(e) {
+        
+        // Configurar persistência de autenticação
+        function setPersistence(remember) {
+            return firebase.auth().setPersistence(
+                remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
+            );
+        }
+        
+        // Tratamento de erros
+        function showError(field, message) {
+            const errorElement = document.getElementById(`${field}Error`);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+        
+        // Login com e-mail/senha
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const provider = new firebase.auth.GoogleAuthProvider();
+            clearErrors();
             
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            showLoading();
+            
+            setPersistence(remember)
+                .then(() => {
+                    return firebase.auth().signInWithEmailAndPassword(email, password);
+                })
+                .then(() => {
                     // Login bem-sucedido
                     window.location.href = 'dashboard.html';
                 })
                 .catch((error) => {
-                    console.error("Erro no login Google:", error);
-                    alert('Erro ao fazer login com Google: ' + error.message);
+                    hideLoading();
+                    
+                    // Tratamento de erros específicos
+                    switch(error.code) {
+                        case 'auth/invalid-email':
+                            showError('email', 'E-mail inválido');
+                            break;
+                        case 'auth/user-disabled':
+                            showError('email', 'Esta conta foi desativada');
+                            break;
+                        case 'auth/user-not-found':
+                            showError('email', 'Nenhuma conta encontrada com este e-mail');
+                            break;
+                        case 'auth/wrong-password':
+                            showError('password', 'Senha incorreta');
+                            break;
+                        case 'auth/too-many-requests':
+                            showError('password', 'Muitas tentativas falhas. Tente novamente mais tarde.');
+                            break;
+                        default:
+                            showError('password', 'Erro ao fazer login: ' + error.message);
+                    }
                 });
         });
-
-        // Login com Discord (implementação completa)
-        document.getElementById('discordLogin').addEventListener('click', function(e) {
+        
+        // Login com Google
+        document.getElementById('googleLogin').addEventListener('click', function(e) {
             e.preventDefault();
+            clearErrors();
             
-            firebase.auth().signInWithPopup(discordProvider)
+            const remember = document.getElementById('remember').checked;
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            showLoading();
+            
+            setPersistence(remember)
+                .then(() => {
+                    return firebase.auth().signInWithPopup(provider);
+                })
                 .then((result) => {
                     // Verifica se é um novo usuário
                     if (result.additionalUserInfo.isNewUser) {
                         // Cria perfil do usuário no Firestore
-                        return firebase.firestore().collection('users').doc(result.user.uid).set({
+                        return db.collection('users').doc(result.user.uid).set({
                             email: result.user.email,
                             nome: result.user.displayName || 'Novo Jogador',
-                            provider: 'discord',
-                            discordId: result.user.uid,
+                            provider: 'google',
                             avatar: result.user.photoURL || '',
                             dataCadastro: firebase.firestore.FieldValue.serverTimestamp()
-                        }).then(() => {
-                            window.location.href = 'dashboard.html';
                         });
-                    } else {
-                        window.location.href = 'dashboard.html';
                     }
                 })
+                .then(() => {
+                    window.location.href = 'dashboard.html';
+                })
                 .catch((error) => {
-                    console.error("Erro no login Discord:", error);
+                    hideLoading();
                     
-                    // Tratamento de erros específicos
-                    let errorMessage = 'Erro ao fazer login com Discord';
+                    let errorMessage = 'Erro ao fazer login com Google';
                     if (error.code === 'auth/account-exists-with-different-credential') {
                         errorMessage = 'Este e-mail já está cadastrado com outro método de login.';
                     } else if (error.code === 'auth/popup-closed-by-user') {
                         errorMessage = 'O popup de login foi fechado antes de completar.';
                     }
                     
-                    alert(errorMessage);
+                    showError('password', errorMessage);
                 });
         });
-
-        // Login tradicional com e-mail/senha
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        
+        // Login com Discord
+        document.getElementById('discordLogin').addEventListener('click', function(e) {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            clearErrors();
             
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
+            const remember = document.getElementById('remember').checked;
+            const provider = new firebase.auth.OAuthProvider('oidc.discord');
+            
+            // Configurações específicas do Discord
+            provider.setCustomParameters({
+                prompt: 'consent'
+            });
+            provider.addScope('identify');
+            provider.addScope('email');
+            
+            showLoading();
+            
+            setPersistence(remember)
+                .then(() => {
+                    return firebase.auth().signInWithPopup(provider);
+                })
+                .then((result) => {
+                    // Verifica se é um novo usuário
+                    if (result.additionalUserInfo.isNewUser) {
+                        // Cria perfil do usuário no Firestore
+                        return db.collection('users').doc(result.user.uid).set({
+                            email: result.user.email,
+                            nome: result.user.displayName || 'Novo Jogador',
+                            provider: 'discord',
+                            discordId: result.user.uid,
+                            avatar: result.user.photoURL || '',
+                            dataCadastro: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                })
+                .then(() => {
                     window.location.href = 'dashboard.html';
                 })
                 .catch((error) => {
-                    alert('Erro ao fazer login: ' + error.message);
+                    hideLoading();
+                    
+                    let errorMessage = 'Erro ao fazer login com Discord';
+                    if (error.code === 'auth/account-exists-with-different-credential') {
+                        errorMessage = 'Este e-mail já está cadastrado com outro método de login.';
+                    } else if (error.code === 'auth/popup-closed-by-user') {
+                        errorMessage = 'O popup de login foi fechado antes de completar.';
+                    } else if (error.code === 'auth/unauthorized-domain') {
+                        errorMessage = 'Domínio não autorizado para login com Discord.';
+                    }
+                    
+                    showError('password', errorMessage);
                 });
         });
-
+        
         // Verifica se já está logado
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 window.location.href = 'dashboard.html';
             }
         });
-    <script>
-        // Mostrar/ocultar senha
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const password = document.getElementById('password');
-            const icon = this.querySelector('i');
-            
-            if (password.type === 'password') {
-                password.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                password.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        });
-
-        // Login com Google
-       document.getElementById('googleLogin').addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    const clientId = '771240663995-d95o486e7709iqekmm2nrtni676l5j5q.apps.googleusercontent.com';
-    const redirectUri = encodeURIComponent(
-        'https://purgatumrpg.netlify.app/.netlify/functions/google-auth-callback'
-    );
-    
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                   `client_id=${clientId}&` +
-                   `redirect_uri=${redirectUri}&` +
-                   `response_type=code&` +
-                   `scope=email%20profile&` +
-                   `access_type=offline&` +
-                   `prompt=consent`;
-    
-    window.location.href = authUrl;
-});
-
-        // Login com Discord
-        document.getElementById('discordLogin').addEventListener('click', function(e) {
-            e.preventDefault();
-            const clientId = '1356631375255572713';
-            const redirectUri = encodeURIComponent('https://purgatumrpg.netlify.app/.netlify/functions/discord-auth-callback');
-            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify%20email`;
-            
-            window.location.href = authUrl;
-        });
-
-        // Validação do formulário
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Simulação de login - substitua por sua lógica real
-            console.log('Tentativa de login com:', email, password);
-            
-            // Simulando login bem-sucedido
-            localStorage.setItem('authToken', 'simulated-token');
-            window.location.href = 'index.html';
-        });
-
-        // Verifica se já está logado
-        if (localStorage.getItem('authToken')) {
-            window.location.href = 'index.html';
-        }
     </script>
 </body>
 </html>
