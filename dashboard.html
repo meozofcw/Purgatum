@@ -32,6 +32,37 @@
   </main>
 
   <script>
+    // Verificar autenticação ao carregar o dashboard
+firebase.auth().onAuthStateChanged((user) => {
+    if (!user) {
+        // Se não estiver autenticado, redireciona para login
+        window.location.href = 'login.html';
+    } else {
+        // Se estiver autenticado, carrega os dados do usuário
+        loadUserData(user.uid);
+    }
+});
+
+// Função para carregar dados do usuário
+async function loadUserData(uid) {
+    try {
+        const doc = await firebase.firestore().collection('users').doc(uid).get();
+        if (doc.exists) {
+            // Preencher dados do dashboard...
+        }
+    } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+    }
+}
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    firebase.auth().signOut().then(() => {
+        window.location.href = 'login.html';
+    });
+});
+
+    
     if (!netlifyIdentity.currentUser()) {
       window.location.href = "login.html";
     } else {
