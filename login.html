@@ -593,6 +593,34 @@
                 window.location.href = 'dashboard.html';
             }
         });
+        // Configuração de persistência melhorada
+async function handleLogin(email, password, remember) {
+    try {
+        showLoading();
+        
+        // Definir persistência antes do login
+        await firebase.auth().setPersistence(
+            remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
+        );
+        
+        // Fazer login
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+        
+        // Redirecionar após login bem-sucedido
+        window.location.href = 'dashboard.html';
+    } catch (error) {
+        hideLoading();
+        console.error("Erro no login:", error);
+        // Tratamento de erros...
+    }
+}
+
+// Ouvinte de estado de autenticação
+firebase.auth().onAuthStateChanged((user) => {
+    if (user && window.location.pathname.endsWith('login.html')) {
+        window.location.href = 'dashboard.html';
+    }
+});
     </script>
 </body>
 </html>
