@@ -129,6 +129,65 @@
             box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
         }
 
+        /* ============ ESTILOS DO PERFIL ============ */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(145, 125, 125, 0.5);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--dark);
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            padding: 1rem;
+            min-width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 100;
+        }
+
+        .user-profile:hover .profile-dropdown {
+            display: block;
+        }
+
+        .profile-dropdown a {
+            display: block;
+            color: var(--light);
+            padding: 0.5rem 0;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .profile-dropdown a:hover {
+            color: var(--primary);
+        }
+
+        .profile-dropdown .divider {
+            height: 1px;
+            background-color: var(--gray);
+            margin: 0.5rem 0;
+        }
+
         /* ============ CARROSSEL ============ */
         .carousel {
             width: 100%;
@@ -414,6 +473,10 @@
             .standalone-features {
                 grid-template-columns: 1fr;
             }
+
+            .profile-dropdown {
+                right: -50px;
+            }
         }
     </style>
 </head>
@@ -435,10 +498,11 @@
         <div class="nav-links">
             <a href="#home">Início</a>
             <a href="download.html" class="auth-btn download-btn">Downloads</a>
-             <a href="atualização.html" class="auth-btn atualização-btn">Atualizações</a>
+            <a href="atualização.html" class="auth-btn atualização-btn">Atualizações</a>
             <a href="apoie-se.html" class="auth-btn pix-pix-btn">Apoie-se</a>
             <a href="https://forms.gle/oQJNVwusEF54wcWA8" class="auth-btn forms-btn">Ficha</a>
-            <div class="auth-buttons">
+            <div class="auth-buttons" id="authButtons">
+                <!-- Será preenchido dinamicamente pelo JavaScript -->
                 <a href="register.html" class="auth-btn register-btn">Registre-se</a>
                 <a href="login.html" class="auth-btn login-btn">Login</a>
             </div>
@@ -510,7 +574,7 @@
     <section class="hero" id="home">
         <h1>Desbrave os Reinos de Purgatum</h1>
         <p>Um mundo de trevas e mistérios onde cada escolha molda seu destino. Junte-se a milhares de jogadores em uma experiência imersiva de RPG.</p>
-        <div class="cta-container">
+        <div class="cta-container" id="mainCta">
             <a href="register.html" class="auth-btn register-btn main-cta">Comece Agora</a>
             <a href="#features" class="auth-btn login-btn main-cta">Saiba Mais</a>
         </div>
@@ -521,7 +585,27 @@
         <p>&copy; 2023 Purgatum RPG. Todos os direitos reservados.</p>
     </footer>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
     <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
         // ============ INTRO ============
         function skipIntro() {
             document.getElementById('intro-video').style.opacity = '0';
@@ -605,23 +689,71 @@
             // Inicia o carrossel
             startAutoSlide();
             updateCarousel();
+        });
 
-            // ============ VERIFICAÇÃO DE LOGIN ============
-            const token = localStorage.getItem('token');
-            const authButtons = document.querySelector('.auth-buttons');
+        // ============ GERENCIAMENTO DE USUÁRIO ============
+        function updateUI(user) {
+            const authButtons = document.getElementById('authButtons');
+            const mainCta = document.getElementById('mainCta');
             
-            if (token) {
+            if (user) {
+                // Usuário logado - mostra foto do perfil
+                const photoURL = user.photoURL || 'assets/default-profile.png';
+                const displayName = user.displayName || 'Usuário';
+                
                 authButtons.innerHTML = `
-                    <a href="profile.html" class="auth-btn login-btn">Perfil</a>
-                    <a href="#" id="logout" class="auth-btn register-btn">Sair</a>
+                    <div class="user-profile">
+                        <img src="${photoURL}" alt="Foto do perfil" class="profile-picture" id="profilePicture">
+                        <div class="profile-dropdown">
+                            <a href="dashboard.html">Dashboard</a>
+                            <a href="profile.html">Meu Perfil</a>
+                            <div class="divider"></div>
+                            <a href="#" id="logout">Sair</a>
+                        </div>
+                    </div>
                 `;
                 
+                // Atualiza o CTA principal
+                if (mainCta) {
+                    mainCta.innerHTML = `
+                        <a href="dashboard.html" class="auth-btn register-btn main-cta">Acessar Dashboard</a>
+                        <a href="profile.html" class="auth-btn login-btn main-cta">Meu Perfil</a>
+                    `;
+                }
+                
+                // Adiciona evento de logout
                 document.getElementById('logout').addEventListener('click', (e) => {
                     e.preventDefault();
-                    localStorage.removeItem('token');
-                    window.location.reload();
+                    auth.signOut().then(() => {
+                        window.location.reload();
+                    });
                 });
+                
+                // Foto do perfil também redireciona para o dashboard
+                document.getElementById('profilePicture').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.href = 'dashboard.html';
+                });
+            } else {
+                // Usuário não logado - mostra botões padrão
+                authButtons.innerHTML = `
+                    <a href="register.html" class="auth-btn register-btn">Registre-se</a>
+                    <a href="login.html" class="auth-btn login-btn">Login</a>
+                `;
+                
+                // CTA principal padrão
+                if (mainCta) {
+                    mainCta.innerHTML = `
+                        <a href="register.html" class="auth-btn register-btn main-cta">Comece Agora</a>
+                        <a href="#features" class="auth-btn login-btn main-cta">Saiba Mais</a>
+                    `;
+                }
             }
+        }
+
+        // Observa mudanças no estado de autenticação
+        auth.onAuthStateChanged((user) => {
+            updateUI(user);
         });
     </script>
 </body>
