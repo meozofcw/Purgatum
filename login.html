@@ -399,6 +399,96 @@
         
         // Referência para o Firestore
         const db = firebase.firestore();
+
+        // Configuração do provedor OIDC personalizado
+function signInWithDiscordOIDC() {
+    const provider = new firebase.auth.OAuthProvider('oidc.discord');
+    
+    // Parâmetros customizados
+    provider.setCustomParameters({
+        prompt: 'consent',
+        response_type: 'code',
+        scope: 'openid email identify'
+    });
+
+    firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            // Sucesso no login
+            const user = result.user;
+            console.log('Usuário Discord (OIDC):', user);
+            
+            // Verifica se é novo usuário
+            if (result.additionalUserInfo.isNewUser) {
+                createDiscordUserProfile(user);
+            }
+            
+            window.location.href = 'dashboard.html';
+        })
+        .catch((error) => {
+            console.error('Erro no login Discord OIDC:', error);
+            handleOIDCError(error);
+        });
+}
+
+// Criar perfil do usuário no Firestore
+async function createDiscordUserProfile(user) {
+    try {
+        // Obter informações adicionais da API do Discord
+        const discordUserInfo = await fetchDiscordUserInfo(user);
+        
+        const userData = {
+            uid: user.uid,
+            email: user.email,
+            displayName: discordUserInfo.username || user.displayName,
+            avatar: discordUserInfo.avatar 
+                ? `https://cdn.discordapp.com/avatars/${discordUserInfo.id}/${discordUserInfo.avatar}.png`
+                : user.photoURL,
+            discordId: discordUserInfo.id,
+            discriminator: discordUserInfo.discriminator,
+            provider: 'discord-oidc',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await firebase.firestore().collection('users').doc(user.uid).set(userData);
+    } catch (error) {
+        console.error('Erro ao criar perfil Discord:', error);
+    }
+}
+
+// Obter informações adicionais da API do Discord
+async function fetchDiscordUserInfo(user) {
+    const providerData = user.providerData.find(p => p.providerId === 'oidc.discord');
+    if (!providerData) return {};
+    
+    const response = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+            'Authorization': `Bearer ${providerData.oauthAccessToken}`
+        }
+    });
+    
+    return await response.json();
+}
+
+// Tratamento de erros específicos
+function handleOIDCError(error) {
+    let errorMessage = 'Erro ao fazer login com Discord';
+    
+    switch(error.code) {
+        case 'auth/account-exists-with-different-credential':
+            errorMessage = 'Este e-mail já está cadastrado com outro método de login.';
+            break;
+        case 'auth/network-request-failed':
+            errorMessage = 'Erro de conexão. Verifique sua internet.';
+            break;
+        case 'auth/popup-closed-by-user':
+            errorMessage = 'O popup de login foi fechado antes de completar.';
+            break;
+        default:
+            errorMessage = error.message;
+    }
+    
+    alert(errorMessage);
+}
         
         // Mostrar loading
         function showLoading() {
