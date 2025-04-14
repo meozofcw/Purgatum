@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Personagens - Purgatum RPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #917d7d;
+            --primary-dark: #7a6868;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --light: #f0f0f0;
+            --light-gray: #aaa;
+            --gray: #333;
+            --input-bg: #1a1a1a;
+            --error: #ff6b6b;
+            --success: #4caf50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .logo img {
+            height: 60px;
+            transition: all 0.3s;
+        }
+        
+        .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+        
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .profile-picture:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(145, 125, 125, 0.5);
+        }
+        
+        /* Container Principal */
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--dark);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+        
+        /* Lista de Personagens */
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .character-card {
+            background-color: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--gray);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .character-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .character-body {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .character-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .character-class {
+            font-size: 1rem;
+            color: var(--light-gray);
+            margin-bottom: 1rem;
+        }
+        
+        .character-details {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .character-level {
+            background-color: var(--primary);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .character-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--light);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--primary);
+            color: var(--dark);
+        }
+        
+        /* Mensagem quando não há personagens */
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            background-color: rgba(26, 26, 26, 0.5);
+            border-radius: 8px;
+            border: 1px dashed var(--gray);
+            margin-top: 2rem;
+        }
+        
+        .empty-message i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-message h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .characters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
+        </div>
+        <div class="user-profile" id="userProfile">
+            <!-- Será preenchido pelo JavaScript -->
+        </div>
+    </nav>
+    
+    <!-- Container Principal -->
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Meus Personagens</h1>
+            <a href="new-character.html" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Personagem
+            </a>
+        </div>
+        
+        <div class="characters-grid" id="charactersGrid">
+            <!-- Personagens serão carregados aqui dinamicamente -->
+        </div>
+        
+        <!-- Mensagem quando não há personagens -->
+        <div class="empty-message" id="emptyMessage" style="display: none;">
+            <i class="fas fa-dragon"></i>
+            <h3>Nenhum Personagem Criado</h3>
+            <p>Você ainda não criou nenhum personagem. Comece sua jornada agora!</p>
+            <a href="new-character.html" class="btn btn-primary" style="margin-top: 1rem;">
+                <i class="fas fa-plus"></i> Criar Primeiro Personagem
+            </a>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+            authDomain: "purgatum-rpg-admin.firebaseapp.com",
+            projectId: "purgatum-rpg-admin",
+            storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+            messagingSenderId: "274276091155",
+            appId: "1:274276091155:web:71129a94e8a13d194246e6"
+        };
+
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Elementos da UI
+        const userProfile = document.getElementById('userProfile');
+        const charactersGrid = document.getElementById('charactersGrid');
+        const emptyMessage = document.getElementById('emptyMessage');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        // Mostrar loading
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+        
+        // Esconder loading
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+        
+        // Atualizar UI do perfil do usuário
+        function updateUserProfile(user) {
+            if (user) {
+                const photoURL = user.photoURL || 'assets/default-profile.png';
+                const displayName = user.displayName || 'Usuário';
+                
+                userProfile.innerHTML = `
+                    <img src="${photoURL}" alt="Foto do perfil" class="profile-picture" id="profilePicture">
+                    <div class="profile-dropdown">
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="profile.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <div class="divider"></div>
+                        <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                `;
+                
+                // Adiciona evento de logout
+                document.getElementById('logout').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    auth.signOut().then(() => {
+                        window.location.href = 'index.html';
+                    });
+                });
+            } else {
+                // Se não estiver logado, redireciona para login
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // Carregar personagens do usuário
+        function loadUserCharacters(userId) {
+            showLoading();
+            charactersGrid.innerHTML = '';
+            
+            db.collection('characters')
+                .where('userId', '==', userId)
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((querySnapshot) => {
+                    hideLoading();
+                    
+                    if (querySnapshot.empty) {
+                        emptyMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    emptyMessage.style.display = 'none';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const character = doc.data();
+                        const characterId = doc.id;
+                        
+                        // Formatar a data de criação
+                        const createdAt = character.createdAt?.toDate() || new Date();
+                        const formattedDate = createdAt.toLocaleDateString('pt-BR');
+                        
+                        // Criar card do personagem
+                        const characterCard = document.createElement('div');
+                        characterCard.className = 'character-card';
+                        characterCard.innerHTML = `
+                            <img src="${character.avatar || 'assets/default-character.jpg'}" alt="${character.name}" class="character-image">
+                            <div class="character-body">
+                                <h3 class="character-name">${character.name}</h3>
+                                <p class="character-class">${character.class || 'Classe não definida'} • ${character.race || 'Raça não definida'}</p>
+                                <div class="character-details">
+                                    <span class="character-level">Nível ${character.level || '1'}</span>
+                                    <div class="character-actions">
+                                        <button class="action-btn view-btn" data-id="${characterId}" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="action-btn edit-btn" data-id="${characterId}" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" data-id="${characterId}" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        charactersGrid.appendChild(characterCard);
+                    });
+                    
+                    // Adicionar eventos aos botões
+                    document.querySelectorAll('.view-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const characterId = e.currentTarget.getAttribute('data-id');
+                            window.location.href = `character.html?id=${characterId}`;
+                        });
+                    });
+                    
+                    document.querySelectorAll('.edit-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const characterId = e.currentTarget.getAttribute('data-id');
+                            window.location.href = `edit-character.html?id=${characterId}`;
+                        });
+                    });
+                    
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const characterId = e.currentTarget.getAttribute('data-id');
+                            if (confirm('Tem certeza que deseja excluir este personagem?')) {
+                                deleteCharacter(characterId);
+                            }
+                        });
+                    });
+                })
+                .catch((error) => {
+                    hideLoading();
+                    console.error('Erro ao carregar personagens:', error);
+                    alert('Ocorreu um erro ao carregar seus personagens. Por favor, tente novamente.');
+                });
+        }
+        
+        // Excluir personagem
+        function deleteCharacter(characterId) {
+            showLoading();
+            
+            db.collection('characters').doc(characterId).delete()
+                .then(() => {
+                    hideLoading();
+                    alert('Personagem excluído com sucesso!');
+                    // Recarregar a lista de personagens
+                    const user = auth.currentUser;
+                    if (user) {
+                        loadUserCharacters(user.uid);
+                    }
+                })
+                .catch((error) => {
+                    hideLoading();
+                    console.error('Erro ao excluir personagem:', error);
+                    alert('Ocorreu um erro ao excluir o personagem. Por favor, tente novamente.');
+                });
+        }
+        
+        // Observar mudanças no estado de autenticação
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                updateUserProfile(user);
+                loadUserCharacters(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>
