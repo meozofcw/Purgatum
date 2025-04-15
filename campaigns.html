@@ -538,6 +538,15 @@
                 loadUserCampaigns(user.uid);
             }
         });
+
+    auth.onAuthStateChanged(user => {
+    pageState.user = user;
+    updateUserProfileNav(user);
+    console.log('Estado de autenticação:', user); // Adicione esta linha
+    if (user) {
+        loadUserCampaigns(user.uid);
+    }
+});
     </script>
 </body>
 </html>
