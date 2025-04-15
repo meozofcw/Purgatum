@@ -351,7 +351,7 @@
         <section class="campaigns-list">
             <h2>Minhas Campanhas</h2>
             <div id="myCampaignsList">
-                <p class="empty-message">Nenhuma campanha criada ou participada ainda.</p>
+                <p class="empty-message">Carregando campanhas...</p>
             </div>
         </section>
     </div>
@@ -424,8 +424,53 @@
             }
         }
 
+        // Função para buscar campanhas onde o usuário é o dono
+        const fetchOwnerCampaigns = async (userId) => {
+            const campaignsSnapshot = await db.collection('campaigns')
+                .where('ownerId', '==', userId)
+                .get();
+
+            campaignsSnapshot.forEach(doc => {
+                console.log('Campanha (owner):', doc.id, doc.data());
+                pageState.campaigns.push({ id: doc.id, ...doc.data() });
+            });
+        };
+
+        // Função para buscar campanhas onde o usuário é membro
+        const fetchMemberCampaigns = async (userId) => {
+            const memberOfSnapshot = await db.collection('campaigns')
+                .where('members', 'array-contains', userId)
+                .get();
+
+            memberOfSnapshot.forEach(doc => {
+                const campaign = { id: doc.id, ...doc.data() };
+                if (!pageState.campaigns.some(c => c.id === campaign.id)) {
+                    console.log('Campanha (member):', doc.id, doc.data());
+                    pageState.campaigns.push(campaign);
+                }
+            });
+        };
+
+        // Função para carregar todas as campanhas do usuário
+        async function loadUserCampaigns(userId) {
+            showLoading();
+            pageState.campaigns = [];
+            
+            try {
+                await fetchOwnerCampaigns(userId);
+                await fetchMemberCampaigns(userId);
+                renderCampaignList(pageState.campaigns);
+            } catch (error) {
+                console.error('Erro ao carregar campanhas:', error);
+                myCampaignsList.innerHTML = '<p class="empty-message">Erro ao carregar campanhas.</p>';
+            } finally {
+                hideLoading();
+            }
+        }
+
         function renderCampaignList(campaigns) {
             myCampaignsList.innerHTML = '';
+            
             if (campaigns.length > 0) {
                 campaigns.forEach(campaign => {
                     const campaignCard = document.createElement('div');
@@ -447,43 +492,6 @@
                 emptyMessage.className = 'empty-message';
                 emptyMessage.textContent = 'Nenhuma campanha criada ou participada ainda.';
                 myCampaignsList.appendChild(emptyMessage);
-            }
-        }
-
-        async function loadUserCampaigns(userId) {
-            showLoading();
-            pageState.campaigns = [];
-            console.log('Carregando campanhas para o usuário:', userId);
-
-            try {
-                // Buscar todas as campanhas onde o usuário é o dono OU está na lista de membros
-                const campaignsSnapshot = await db.collection('campaigns')
-                    .where('ownerId', '==', userId)
-                    .get();
-                campaignsSnapshot.forEach(doc => {
-                    console.log('Campanha (owner):', doc.id, doc.data());
-                    pageState.campaigns.push({ id: doc.id, ...doc.data() });
-                });
-
-                const memberOfSnapshot = await db.collection('campaigns')
-                    .where('members', 'array-contains', userId)
-                    .get();
-                memberOfSnapshot.forEach(doc => {
-                    const campaign = { id: doc.id, ...doc.data() };
-                    // Adicionar apenas se ainda não estiver na lista (evitar duplicatas)
-                    if (!pageState.campaigns.some(c => c.id === campaign.id)) {
-                        console.log('Campanha (member):', doc.id, doc.data());
-                        pageState.campaigns.push(campaign);
-                    }
-                });
-
-                renderCampaignList(pageState.campaigns);
-
-            } catch (error) {
-                console.error('Erro ao carregar campanhas:', error);
-                // Exibir mensagem de erro na UI, se necessário
-            } finally {
-                hideLoading();
             }
         }
 
@@ -531,22 +539,18 @@
             }
         });
 
+        // Monitorar estado de autenticação
         auth.onAuthStateChanged(user => {
             pageState.user = user;
             updateUserProfileNav(user);
+            console.log('Estado de autenticação:', user);
+            
             if (user) {
                 loadUserCampaigns(user.uid);
+            } else {
+                window.location.href = 'login.html';
             }
         });
-
-    auth.onAuthStateChanged(user => {
-    pageState.user = user;
-    updateUserProfileNav(user);
-    console.log('Estado de autenticação:', user); // Adicione esta linha
-    if (user) {
-        loadUserCampaigns(user.uid);
-    }
-});
     </script>
 </body>
 </html>
