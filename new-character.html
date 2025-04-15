@@ -17,6 +17,7 @@
             --gray: #333;
             --input-bg: #1a1a1a;
             --card-bg: rgba(30, 30, 30, 0.8);
+            --error: #ff6b6b;
         }
         
         * {
@@ -73,6 +74,11 @@
         .sidebar-nav a:hover, .sidebar-nav a.active {
             background-color: rgba(145, 125, 125, 0.3);
             color: var(--primary);
+        }
+        
+        .sidebar-nav a i {
+            width: 20px;
+            text-align: center;
         }
         
         /* Main Content */
@@ -154,6 +160,14 @@
             color: var(--light);
         }
         
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23917d7d'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 1.2rem;
+        }
+        
         .form-group textarea {
             min-height: 100px;
             resize: vertical;
@@ -197,6 +211,51 @@
             gap: 0.5rem;
         }
         
+        .skill-item input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .skill-item input[type="checkbox"]:checked {
+            background-color: var(--primary);
+        }
+        
+        .skill-item input[type="checkbox"]:checked::after {
+            content: "✓";
+            position: absolute;
+            color: var(--dark);
+            font-size: 12px;
+            left: 2px;
+            top: -1px;
+        }
+        
+        .skill-item input[type="checkbox"]:disabled {
+            border-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .skill-item input[type="checkbox"]:disabled + label {
+            color: var(--gray);
+        }
+        
+        .skills-counter {
+            grid-column: span 2;
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+            margin-top: -0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skills-counter.error {
+            color: var(--error);
+        }
+        
         .form-actions {
             grid-column: span 2;
             display: flex;
@@ -230,38 +289,14 @@
             color: var(--light);
         }
         
+        .required-field::after {
+            content: " *";
+            color: var(--primary);
+        }
+        
         /* Preview Section */
         .preview-section {
             grid-column: span 2;
-        }
-        
-        .character-preview {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 2rem;
-            border: 1px solid var(--primary);
-            font-family: 'Courier New', monospace;
-        }
-        
-        .preview-title {
-            text-align: center;
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-        
-        .preview-divider {
-            border: none;
-            height: 2px;
-            background-color: var(--primary);
-            margin: 1rem 0;
-        }
-        
-        .preview-attribute {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
         }
         
         /* Responsivo */
@@ -339,18 +374,31 @@
                 <h2 class="section-title">Informações Básicas</h2>
                 
                 <div class="form-group">
-                    <label for="characterName">Nome do Personagem</label>
+                    <label for="characterName" class="required-field">Nome do Personagem</label>
                     <input type="text" id="characterName" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="characterAge">Idade/Faixa Etária</label>
-                    <input type="text" id="characterAge">
+                    <label for="characterAge" class="required-field">Idade</label>
+                    <select id="characterAge" required>
+                        <option value="" disabled selected>Selecione uma faixa etária</option>
+                        <option value="Jovem">Jovem</option>
+                        <option value="Adulto">Adulto</option>
+                        <option value="Idoso">Idoso</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="archetype">Arquétipo</label>
-                    <input type="text" id="archetype">
+                    <label for="archetype" class="required-field">Arquétipo</label>
+                    <select id="archetype" required>
+                        <option value="" disabled selected>Selecione um arquétipo</option>
+                        <option value="Ferreiro">Ferreiro</option>
+                        <option value="Clerigo">Clérigo</option>
+                        <option value="Ladino">Ladino</option>
+                        <option value="Bardo">Bardo</option>
+                        <option value="Arqueiro">Arqueiro</option>
+                        <option value="Academico">Acadêmico</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -404,8 +452,13 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="affiliation">Afiliação</label>
-                    <input type="text" id="affiliation">
+                    <label for="affiliation" class="required-field">Afiliação</label>
+                    <select id="affiliation" required>
+                        <option value="" disabled selected>Selecione uma afiliação</option>
+                        <option value="Igreja do Norte">Igreja do Norte</option>
+                        <option value="Igreja do Sul">Igreja do Sul</option>
+                        <option value="Igreja do Leste">Igreja do Leste</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -416,55 +469,56 @@
             
             <!-- Seção 4: Perícias -->
             <div class="form-section">
-                <h2 class="section-title">Perícias</h2>
+                <h2 class="section-title">Perícias (Máximo 4)</h2>
+                <div class="skills-counter" id="skillsCounter">0/4 perícias selecionadas</div>
                 
                 <div class="skills-list">
                     <div class="skill-item">
-                        <input type="checkbox" id="skill1">
+                        <input type="checkbox" id="skill1" class="skill-checkbox">
                         <label for="skill1">Sobrevivente</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill2">
+                        <input type="checkbox" id="skill2" class="skill-checkbox">
                         <label for="skill2">Mestre Improvisador</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill3">
+                        <input type="checkbox" id="skill3" class="skill-checkbox">
                         <label for="skill3">Instinto de Fuga</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill4">
+                        <input type="checkbox" id="skill4" class="skill-checkbox">
                         <label for="skill4">Sangue Frio</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill5">
+                        <input type="checkbox" id="skill5" class="skill-checkbox">
                         <label for="skill5">Mestre Explorador</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill6">
+                        <input type="checkbox" id="skill6" class="skill-checkbox">
                         <label for="skill6">Mão Leve</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill7">
+                        <input type="checkbox" id="skill7" class="skill-checkbox">
                         <label for="skill7">Líder</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill8">
+                        <input type="checkbox" id="skill8" class="skill-checkbox">
                         <label for="skill8">Canibalismo Tático</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill9">
+                        <input type="checkbox" id="skill9" class="skill-checkbox">
                         <label for="skill9">Adaptação a Veneno</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill10">
+                        <input type="checkbox" id="skill10" class="skill-checkbox">
                         <label for="skill10">Cão de Guarda</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill11">
+                        <input type="checkbox" id="skill11" class="skill-checkbox">
                         <label for="skill11">Língua de Cobra</label>
                     </div>
                     <div class="skill-item">
-                        <input type="checkbox" id="skill12">
+                        <input type="checkbox" id="skill12" class="skill-checkbox">
                         <label for="skill12">Profeta do Caos</label>
                     </div>
                 </div>
@@ -520,42 +574,10 @@
                 </div>
             </div>
             
-            <!-- Preview -->
-            <div class="form-section preview-section">
-                <h2 class="section-title">Pré-visualização</h2>
-                <div class="character-preview" id="characterPreview">
-                    <div class="preview-title" id="previewName">NOME DO PERSONAGEM</div>
-                    <hr class="preview-divider">
-                    
-                    <h3>Atributos</h3>
-                    <div class="preview-attribute">
-                        <span>Bruto:</span>
-                        <span id="previewBruto">5</span>
-                    </div>
-                    <div class="preview-attribute">
-                        <span>Destreza:</span>
-                        <span id="previewDestreza">5</span>
-                    </div>
-                    <div class="preview-attribute">
-                        <span>Sabedoria:</span>
-                        <span id="previewSabedoria">5</span>
-                    </div>
-                    <div class="preview-attribute">
-                        <span>Comunicação:</span>
-                        <span id="previewComunicacao">5</span>
-                    </div>
-                    
-                    <hr class="preview-divider">
-                    <div id="previewOtherInfo">
-                        Mais informações serão exibidas aqui conforme preenchimento
-                    </div>
-                </div>
-            </div>
-            
             <!-- Ações do Formulário -->
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Salvar Personagem</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Salvar Personagem</button>
             </div>
         </form>
     </div>
@@ -581,31 +603,100 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // Atualizar preview conforme formulário é preenchido
-        function updatePreview() {
-            document.getElementById('previewName').textContent = 
-                document.getElementById('characterName').value || 'NOME DO PERSONAGEM';
+        // Controle de perícias selecionadas
+        let selectedSkillsCount = 0;
+        const maxSkills = 4;
+        const skillsCounter = document.getElementById('skillsCounter');
+        const skillCheckboxes = document.querySelectorAll('.skill-checkbox');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Atualizar contador de perícias
+        function updateSkillsCounter() {
+            skillsCounter.textContent = `${selectedSkillsCount}/${maxSkills} perícias selecionadas`;
             
-            document.getElementById('previewBruto').textContent = 
-                document.getElementById('bruto').value;
-            
-            document.getElementById('previewDestreza').textContent = 
-                document.getElementById('destreza').value;
-            
-            document.getElementById('previewSabedoria').textContent = 
-                document.getElementById('sabedoria').value;
-            
-            document.getElementById('previewComunicacao').textContent = 
-                document.getElementById('comunicacao').value;
-            
-            // Você pode adicionar mais atualizações de preview aqui
+            if (selectedSkillsCount > maxSkills) {
+                skillsCounter.classList.add('error');
+                submitBtn.disabled = true;
+            } else {
+                skillsCounter.classList.remove('error');
+                submitBtn.disabled = false;
+            }
         }
         
-        // Adiciona eventos para atualizar o preview
-        document.querySelectorAll('input, textarea, select').forEach(element => {
-            element.addEventListener('input', updatePreview);
-            element.addEventListener('change', updatePreview);
-        });
+        // Gerenciar seleção de perícias
+        function handleSkillSelection() {
+            skillCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        if (selectedSkillsCount < maxSkills) {
+                            selectedSkillsCount++;
+                        } else {
+                            e.target.checked = false;
+                            return;
+                        }
+                    } else {
+                        selectedSkillsCount--;
+                    }
+                    
+                    // Desabilitar/abilitar checkboxes não selecionados
+                    if (selectedSkillsCount >= maxSkills) {
+                        skillCheckboxes.forEach(cb => {
+                            if (!cb.checked) cb.disabled = true;
+                        });
+                    } else {
+                        skillCheckboxes.forEach(cb => {
+                            cb.disabled = false;
+                        });
+                    }
+                    
+                    updateSkillsCounter();
+                });
+            });
+        }
+        
+        // Coletar dados do formulário
+        function getFormData() {
+            const user = auth.currentUser;
+            const skills = [];
+            
+            // Coletar perícias selecionadas
+            skillCheckboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    const skillName = document.querySelector(`label[for="skill${index + 1}"]`).textContent;
+                    skills.push(skillName);
+                }
+            });
+            
+            return {
+                userId: user.uid,
+                name: document.getElementById('characterName').value,
+                age: document.getElementById('characterAge').value,
+                archetype: document.getElementById('archetype').value,
+                appearance: document.getElementById('appearance').value,
+                attributes: {
+                    bruto: parseInt(document.getElementById('bruto').value),
+                    destreza: parseInt(document.getElementById('destreza').value),
+                    sabedoria: parseInt(document.getElementById('sabedoria').value),
+                    comunicacao: parseInt(document.getElementById('comunicacao').value)
+                },
+                class: document.getElementById('characterClass').value,
+                affiliation: document.getElementById('affiliation').value,
+                origin: document.getElementById('origin').value,
+                equipment: document.getElementById('equipment').value,
+                bonus: document.getElementById('bonus').value,
+                armor: document.getElementById('armor').value,
+                weapons: document.getElementById('weapons').value,
+                relationships: [
+                    document.getElementById('relationship1').value,
+                    document.getElementById('relationship2').value,
+                    document.getElementById('relationship3').value,
+                    document.getElementById('relationship4').value
+                ],
+                skills: skills,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+        }
         
         // Carregar dados do usuário
         auth.onAuthStateChanged((user) => {
@@ -631,48 +722,14 @@
                 return;
             }
             
-            // Coletar dados do formulário
-            const characterData = {
-                userId: user.uid,
-                name: document.getElementById('characterName').value,
-                age: document.getElementById('characterAge').value,
-                archetype: document.getElementById('archetype').value,
-                appearance: document.getElementById('appearance').value,
-                attributes: {
-                    bruto: parseInt(document.getElementById('bruto').value),
-                    destreza: parseInt(document.getElementById('destreza').value),
-                    sabedoria: parseInt(document.getElementById('sabedoria').value),
-                    comunicacao: parseInt(document.getElementById('comunicacao').value)
-                },
-                class: document.getElementById('characterClass').value,
-                affiliation: document.getElementById('affiliation').value,
-                origin: document.getElementById('origin').value,
-                equipment: document.getElementById('equipment').value,
-                bonus: document.getElementById('bonus').value,
-                armor: document.getElementById('armor').value,
-                weapons: document.getElementById('weapons').value,
-                relationships: [
-                    document.getElementById('relationship1').value,
-                    document.getElementById('relationship2').value,
-                    document.getElementById('relationship3').value,
-                    document.getElementById('relationship4').value
-                ],
-                skills: [],
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            // Adicionar perícias selecionadas
-            for (let i = 1; i <= 12; i++) {
-                if (document.getElementById(`skill${i}`).checked) {
-                    const skillName = document.querySelector(`label[for="skill${i}"]`).textContent;
-                    characterData.skills.push(skillName);
-                }
+            if (selectedSkillsCount > maxSkills) {
+                alert(`Por favor, selecione no máximo ${maxSkills} perícias.`);
+                return;
             }
             
             try {
                 // Salvar no Firestore
-                await db.collection('characters').add(characterData);
+                await db.collection('characters').add(getFormData());
                 alert('Personagem criado com sucesso!');
                 window.location.href = 'characters.html';
             } catch (error) {
@@ -696,8 +753,9 @@
             });
         });
         
-        // Inicializar preview
-        updatePreview();
+        // Inicializar
+        handleSkillSelection();
+        updateSkillsCounter();
     </script>
 </body>
 </html>
