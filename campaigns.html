@@ -125,8 +125,8 @@
             box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
         }
 
-        /* Criar Campanha */
-        .create-campaign-section {
+        /* Entrar em Campanha */
+        .join-campaign-section {
             background-color: rgba(26, 26, 26, 0.8);
             border-radius: 8px;
             border: 1px solid var(--gray);
@@ -134,7 +134,7 @@
             margin-bottom: 2rem;
         }
 
-        .create-campaign-section h2 {
+        .join-campaign-section h2 {
             font-family: 'Cinzel', serif;
             color: var(--primary);
             margin-bottom: 1rem;
@@ -188,22 +188,6 @@
         .success-message {
             color: var(--success);
             margin-top: 0.5rem;
-        }
-
-        /* Entrar em Campanha */
-        .join-campaign-section {
-            background-color: rgba(26, 26, 26, 0.8);
-            border-radius: 8px;
-            border: 1px solid var(--gray);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .join-campaign-section h2 {
-            font-family: 'Cinzel', serif;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: 1.8rem;
         }
 
         /* Lista de Campanhas */
@@ -343,23 +327,11 @@
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">Campanhas</h1>
-            <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+            <div>
+                <a href="create-campaign.html" class="btn btn-primary"><i class="fas fa-plus"></i> Criar Campanha</a>
+                <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+            </div>
         </div>
-
-        <section class="create-campaign-section">
-            <h2>Criar Nova Campanha</h2>
-            <form id="createCampaignForm">
-                <div class="form-group">
-                    <label for="campaignName">Nome da Campanha</label>
-                    <input type="text" id="campaignName" name="campaignName" required>
-                </div>
-                <div class="form-group">
-                    <a href="nova-campanha.html" class="auth-btn campaigns-btn">Crie Sua Campanha</a>
-                </div>
-                <p class="error-message" id="createCampaignError"></p>
-                <p class="success-message" id="createCampaignSuccess"></p>
-            </form>
-        </section>
 
         <section class="join-campaign-section">
             <h2>Entrar em uma Campanha</h2>
@@ -410,10 +382,6 @@
 
         // Elementos da UI
         const userProfileNav = document.getElementById('userProfile');
-        const createCampaignForm = document.getElementById('createCampaignForm');
-        const campaignNameInput = document.getElementById('campaignName');
-        const createCampaignError = document.getElementById('createCampaignError');
-        const createCampaignSuccess = document.getElementById('createCampaignSuccess');
         const joinCampaignForm = document.getElementById('joinCampaignForm');
         const campaignCodeInput = document.getElementById('campaignCode');
         const joinCampaignError = document.getElementById('joinCampaignError');
@@ -462,13 +430,47 @@
             }
         }
 
-        // Criar nova campanha
-        createCampaignForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            createCampaignError.textContent = '';
-            createCampaignSuccess.textContent = '';
+        // Carregar campanhas do usuário
+        function loadUserCampaigns(userId) {
             showLoading();
+            myCampaignsList.innerHTML = '';
 
-            const campaignName = campaignNameInput.value.trim();
-            const userId = auth.currentUser.uid;
-            const campaign
+            // Consulta para campanhas criadas pelo usuário
+            db.collection('campaigns')
+                .where('ownerId', '==', userId)
+                .get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            renderCampaign(doc);
+                        });
+                    } else {
+                        const emptyMessage = document.createElement('p');
+                        emptyMessage.className = 'empty-message';
+                        emptyMessage.textContent = 'Nenhuma campanha criada ainda.';
+                        myCampaignsList.appendChild(emptyMessage);
+                    }
+                    hideLoading();
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar campanhas criadas:', error);
+                    const errorMessage = document.createElement('p');
+                    errorMessage.className = 'error-message';
+                    errorMessage.textContent = 'Erro ao carregar suas campanhas.';
+                    myCampaignsList.appendChild(errorMessage);
+                    hideLoading();
+                });
+
+            // Consulta para campanhas nas quais o usuário participa
+            db.collection('campaignMembers')
+                .where('userId', '==', userId)
+                .get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            const campaignId = doc.data().campaignId;
+                            db.collection('campaigns').doc(campaignId).get()
+                                .then((campaignDoc) => {
+                                    if (campaignDoc.exists) {
+                                        renderCampaign(campaignDoc);
+                                    }
