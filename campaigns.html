@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campanhas - Purgatum RPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #917d7d;
+            --primary-dark: #7a6868;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --light: #f0f0f0;
+            --light-gray: #aaa;
+            --gray: #333;
+            --input-bg: #1a1a1a;
+            --error: #ff6b6b;
+            --success: #4caf50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        /* Navbar (reutilizando estilos) */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .logo img {
+            height: 60px;
+            transition: all 0.3s;
+        }
+
+        .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(145, 125, 125, 0.5);
+        }
+
+        /* Container Principal */
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 960px;
+            margin: 2rem auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        /* Criar Campanha */
+        .create-campaign-section {
+            background-color: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .create-campaign-section h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .form-group button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background-color: var(--primary);
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .form-group button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        .error-message {
+            color: var(--error);
+            margin-top: 0.5rem;
+        }
+
+        .success-message {
+            color: var(--success);
+            margin-top: 0.5rem;
+        }
+
+        /* Entrar em Campanha */
+        .join-campaign-section {
+            background-color: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .join-campaign-section h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        /* Lista de Campanhas */
+        .campaigns-list {
+            background-color: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            padding: 1.5rem;
+        }
+
+        .campaigns-list h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .campaign-card {
+            background-color: var(--input-bg);
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .campaign-info {
+            flex-grow: 1;
+        }
+
+        .campaign-name {
+            font-weight: bold;
+            color: var(--light);
+            margin-bottom: 0.3rem;
+        }
+
+        .campaign-owner {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        .campaign-actions button {
+            padding: 0.6rem 1rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background-color: var(--primary);
+            color: var(--dark);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .campaign-actions button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: var(--light-gray);
+            padding: 2rem;
+        }
+
+        /* Loading Overlay (reutilizando estilos) */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+
+            .campaign-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .campaign-actions {
+                margin-top: 0.5rem;
+            }
+
+            .campaign-actions button {
+                margin-left: 0;
+                margin-right: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
+        </div>
+        <div class="user-profile" id="userProfile">
+            </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Campanhas</h1>
+            <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+        </div>
+
+        <section class="create-campaign-section">
+            <h2>Criar Nova Campanha</h2>
+            <form id="createCampaignForm">
+                <div class="form-group">
+                    <label for="campaignName">Nome da Campanha</label>
+                    <input type="text" id="campaignName" name="campaignName" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Criar Campanha</button>
+                </div>
+                <p class="error-message" id="createCampaignError"></p>
+                <p class="success-message" id="createCampaignSuccess"></p>
+            </form>
+        </section>
+
+        <section class="join-campaign-section">
+            <h2>Entrar em uma Campanha</h2>
+            <form id="joinCampaignForm">
+                <div class="form-group">
+                    <label for="campaignCode">Código da Campanha</label>
+                    <input type="text" id="campaignCode" name="campaignCode" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Entrar na Campanha</button>
+                </div>
+                <p class="error-message" id="joinCampaignError"></p>
+                <p class="success-message" id="joinCampaignSuccess"></p>
+            </form>
+        </section>
+
+        <section class="campaigns-list">
+            <h2>Minhas Campanhas</h2>
+            <div id="myCampaignsList">
+                <p class="empty-message">Nenhuma campanha criada ou participada ainda.</p>
+            </div>
+        </section>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase (substitua pelas suas credenciais)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+            authDomain: "purgatum-rpg-admin.firebaseapp.com",
+            projectId: "purgatum-rpg-admin",
+            storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+            messagingSenderId: "274276091155",
+            appId: "1:274276091155:web:71129a94e8a13d194246e6"
+        };
+
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Elementos da UI
+        const userProfileNav = document.getElementById('userProfile');
+        const createCampaignForm = document.getElementById('createCampaignForm');
+        const campaignNameInput = document.getElementById('campaignName');
+        const createCampaignError = document.getElementById('createCampaignError');
+        const createCampaignSuccess = document.getElementById('createCampaignSuccess');
+        const joinCampaignForm = document.getElementById('joinCampaignForm');
+        const campaignCodeInput = document.getElementById('campaignCode');
+        const joinCampaignError = document.getElementById('joinCampaignError');
+        const joinCampaignSuccess = document.getElementById('joinCampaignSuccess');
+        const myCampaignsList = document.getElementById('myCampaignsList');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Mostrar loading
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        // Esconder loading
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        // Atualizar UI do perfil do usuário na navbar
+        function updateUserProfileNav(user) {
+            if (user) {
+                const photoURL = user.photoURL || 'assets/default-profile.png';
+                const displayName = user.displayName || 'Usuário';
+
+                userProfileNav.innerHTML = `
+                    <img src="${photoURL}" alt="Foto do perfil" class="profile-picture" id="profilePicture">
+                    <div class="profile-dropdown">
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="profile.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <div class="divider"></div>
+                        <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                `;
+
+                // Adiciona evento de logout (se necessário)
+                const logoutButton = document.getElementById('logout');
+                if (logoutButton) {
+                    logoutButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        auth.signOut().then(() => {
+                            window.location.href = 'index.html';
+                        });
+                    });
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Criar nova campanha
+        createCampaignForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            createCampaignError.textContent = '';
+            createCampaignSuccess.textContent = '';
+            showLoading();
+
+            const campaignName = campaignNameInput.value.trim();
+            const userId = auth.currentUser.uid;
+            const campaign
