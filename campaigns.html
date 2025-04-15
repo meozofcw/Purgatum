@@ -460,119 +460,70 @@
         }
 
         // Funções de dados
-        // Funções de dados
-        async function loadUserCampaigns(userId) {
-            showLoading();
-            pageState.campaigns = [];
+       async function loadUserCampaigns(userId) {
+    showLoading();
+    pageState.campaigns = [];
+    console.log('Carregando campanhas para o usuário:', userId);
 
-            try {
-                // Buscar campanhas criadas pelo usuário
-                const createdCampaignsSnapshot = await db.collection('campaigns')
-                    .where('ownerId', '==', userId)
-                    .get();
-                createdCampaignsSnapshot.forEach(doc => {
-                    pageState.campaigns.push({ id: doc.id, ...doc.data() });
-                });
+    try {
+        // Buscar campanhas criadas
+        const createdCampaignsSnapshot = await db.collection('campaigns')
+            .where('ownerId', '==', userId)
+            .get();
+        console.log('Campanhas criadas encontradas:', createdCampaignsSnapshot.size);
+        createdCampaignsSnapshot.forEach(doc => {
+            console.log('Campanha criada:', doc.id, doc.data());
+            pageState.campaigns.push({ id: doc.id, ...doc.data() });
+        });
 
-                // Buscar campanhas nas quais o usuário participa (usando a coleção 'campaignMembers')
-                const memberCampaignsSnapshot = await db.collection('campaignMembers')
-                    .where('userId', '==', userId)
-                    .get();
-
-                const memberCampaignIds = [];
-                memberCampaignsSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data && data.campaignId) {
-                        memberCampaignIds.push(data.campaignId);
-                    }
-                });
-
-                // Buscar os detalhes das campanhas nas quais o usuário é membro
-                const memberCampaignsDetails = await Promise.all(
-                    memberCampaignIds.map(async campaignId => {
-                        const campaignDoc = await db.collection('campaigns').doc(campaignId).get();
-                        if (campaignDoc.exists) {
-                            return { id: campaignDoc.id, ...campaignDoc.data() };
-                        }
-                        return null; // Lidar com campanhas que podem não existir mais
-                    })
-                );
-
-                // Adicionar as campanhas participadas à lista
-                memberCampaignsDetails.filter(campaign => campaign !== null).forEach(campaign => {
-                    pageState.campaigns.push(campaign);
-                });
-
-                // Remover duplicatas (se o usuário criou e participa da mesma campanha)
-                const uniqueCampaigns = pageState.campaigns.filter((campaign, index, self) =>
-                    index === self.findIndex((c) => (c.id === campaign.id))
-                );
-
-                pageState.campaigns = uniqueCampaigns;
-                renderCampaignList(pageState.campaigns);
-
-            } catch (error) {
-                console.error('Erro ao carregar campanhas:', error);
-                // Exibir uma mensagem de erro para o usuário, se necessário
-            } finally {
-                hideLoading();
+        // Buscar participação
+        const memberCampaignsSnapshot = await db.collection('campaignMembers')
+            .where('userId', '==', userId)
+            .get();
+        console.log('Participações em campanhas encontradas:', memberCampaignsSnapshot.size);
+        const memberCampaignIds = [];
+        memberCampaignsSnapshot.forEach(doc => {
+            const data = doc.data();
+            console.log('Participação:', doc.id, data);
+            if (data && data.campaignId) {
+                memberCampaignIds.push(data.campaignId);
             }
-        }
+        });
+        console.log('IDs de campanhas participadas:', memberCampaignIds);
 
-        // Função para entrar em uma campanha
-        joinCampaignForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const campaignCode = campaignCodeInput.value.trim();
-            if (!campaignCode) {
-                joinCampaignError.textContent = 'Por favor, insira o código da campanha.';
-                return;
-            }
-
-            showLoading();
-            joinCampaignError.textContent = '';
-            joinCampaignSuccess.textContent = '';
-
-            try {
-                const campaignsSnapshot = await db.collection('campaigns')
-                    .where('code', '==', campaignCode)
-                    .get();
-
-                if (campaignsSnapshot.empty) {
-                    joinCampaignError.textContent = 'Código de campanha inválido.';
+        // Buscar detalhes das campanhas participadas
+        const memberCampaignsDetails = await Promise.all(
+            memberCampaignIds.map(async campaignId => {
+                console.log('Buscando detalhes da campanha:', campaignId);
+                const campaignDoc = await db.collection('campaigns').doc(campaignId).get();
+                if (campaignDoc.exists) {
+                    console.log('Detalhes da campanha encontrada:', campaignId, campaignDoc.data());
+                    return { id: campaignDoc.id, ...campaignDoc.data() };
                 } else {
-                    const campaignDoc = campaignsSnapshot.docs[0];
-                    const campaignId = campaignDoc.id;
-                    const userId = pageState.user.uid;
-                    const campaignData = campaignDoc.data();
-
-                    if (campaignData.members && campaignData.members.includes(userId)) {
-                        joinCampaignError.textContent = 'Você já participa desta campanha.';
-                    } else {
-                        // Adicionar o usuário à lista de membros da campanha
-                        await db.collection('campaigns').doc(campaignId).update({
-                            members: firebase.firestore.FieldValue.arrayUnion(userId)
-                        });
-                        joinCampaignSuccess.textContent = 'Você entrou na campanha com sucesso!';
-                        campaignCodeInput.value = '';
-                        loadUserCampaigns(userId); // Recarregar a lista de campanhas
-                    }
+                    console.log('Campanha não encontrada (pode ter sido deletada):', campaignId);
+                    return null;
                 }
-            } catch (error) {
-                console.error('Erro ao entrar na campanha:', error);
-                joinCampaignError.textContent = 'Ocorreu um erro ao tentar entrar na campanha.';
-            } finally {
-                hideLoading();
-            }
+            })
+        );
+
+        memberCampaignsDetails.filter(campaign => campaign !== null).forEach(campaign => {
+            pageState.campaigns.push(campaign);
         });
 
-        // Listener de autenticação
-        auth.onAuthStateChanged(user => {
-            pageState.user = user;
-            updateUserProfileNav(user);
-            if (user) {
-                loadUserCampaigns(user.uid);
-            }
-        });
+        // Remover duplicatas
+        const uniqueCampaigns = pageState.campaigns.filter((campaign, index, self) =>
+            index === self.findIndex((c) => (c.id === campaign.id))
+        );
+
+        pageState.campaigns = uniqueCampaigns;
+        renderCampaignList(pageState.campaigns);
+
+    } catch (error) {
+        console.error('Erro ao carregar campanhas:', error);
+    } finally {
+        hideLoading();
+    }
+}
     </script>
 </body>
 </html>
