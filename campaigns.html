@@ -430,10 +430,30 @@
             }
         }
 
+        // Renderizar uma campanha na lista
+        function renderCampaign(doc) {
+            const campaign = doc.data();
+            const campaignId = doc.id;
+            const campaignCard = document.createElement('div');
+            campaignCard.className = 'campaign-card';
+            campaignCard.innerHTML = `
+                <div class="campaign-info">
+                    <h3 class="campaign-name"><span class="math-inline">\{campaign\.name\}</h3\>
+<p class\="campaign\-owner"\></span>{campaign.ownerName ? `Mestre: ${campaign.ownerName}` : 'Mestre Desconhecido'}</p>
+                    <p class="campaign-code">Código: <strong>${campaign.code}</strong></p>
+                </div>
+                <div class="campaign-actions">
+                    <button class="btn btn-primary">Ver Detalhes</button>
+                </div>
+            `;
+            myCampaignsList.appendChild(campaignCard);
+        }
+
         // Carregar campanhas do usuário
         function loadUserCampaigns(userId) {
             showLoading();
             myCampaignsList.innerHTML = '';
+            let hasCampaigns = false;
 
             // Consulta para campanhas criadas pelo usuário
             db.collection('campaigns')
@@ -441,36 +461,15 @@
                 .get()
                 .then((querySnapshot) => {
                     if (!querySnapshot.empty) {
+                        hasCampaigns = true;
                         querySnapshot.forEach((doc) => {
                             renderCampaign(doc);
                         });
-                    } else {
-                        const emptyMessage = document.createElement('p');
-                        emptyMessage.className = 'empty-message';
-                        emptyMessage.textContent = 'Nenhuma campanha criada ainda.';
-                        myCampaignsList.appendChild(emptyMessage);
                     }
-                    hideLoading();
+                    // Consulta para campanhas nas quais o usuário participa
+                    return db.collection('campaignMembers')
+                        .where('userId', '==', userId)
+                        .get();
                 })
-                .catch((error) => {
-                    console.error('Erro ao carregar campanhas criadas:', error);
-                    const errorMessage = document.createElement('p');
-                    errorMessage.className = 'error-message';
-                    errorMessage.textContent = 'Erro ao carregar suas campanhas.';
-                    myCampaignsList.appendChild(errorMessage);
-                    hideLoading();
-                });
-
-            // Consulta para campanhas nas quais o usuário participa
-            db.collection('campaignMembers')
-                .where('userId', '==', userId)
-                .get()
                 .then((querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        querySnapshot.forEach((doc) => {
-                            const campaignId = doc.data().campaignId;
-                            db.collection('campaigns').doc(campaignId).get()
-                                .then((campaignDoc) => {
-                                    if (campaignDoc.exists) {
-                                        renderCampaign(campaignDoc);
-                                    }
+                    if
