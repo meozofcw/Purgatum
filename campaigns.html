@@ -20,7 +20,299 @@
             --error: #ff6b6b;
             --success: #4caf50;
         }
-        /* ... (restante dos estilos) ... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .logo img {
+            height: 60px;
+            transition: all 0.3s;
+        }
+
+        .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(145, 125, 125, 0.5);
+        }
+
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 960px;
+            margin: 2rem auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        .join-campaign-section {
+            background-color: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .join-campaign-section h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .form-group button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background-color: var(--primary);
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .form-group button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        .error-message {
+            color: var(--error);
+            margin-top: 0.5rem;
+        }
+
+        .success-message {
+            color: var(--success);
+            margin-top: 0.5rem;
+        }
+
+        .campaigns-list {
+            background-color: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            padding: 1.5rem;
+        }
+
+        .campaigns-list h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .campaign-card {
+            background-color: var(--input-bg);
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .campaign-info {
+            flex-grow: 1;
+        }
+
+        .campaign-name {
+            font-weight: bold;
+            color: var(--light);
+            margin-bottom: 0.3rem;
+        }
+
+        .campaign-owner {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        .campaign-code {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        .campaign-actions button {
+            padding: 0.6rem 1rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background-color: var(--primary);
+            color: var(--dark);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .campaign-actions button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: var(--light-gray);
+            padding: 2rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+
+            .campaign-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .campaign-actions {
+                margin-top: 0.5rem;
+            }
+
+            .campaign-actions button {
+                margin-left: 0;
+                margin-right: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
