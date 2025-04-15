@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Ficha - Purgatum RPG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #917d7d;
+            --primary-dark: #7a6868;
             --dark: #0a0a0a;
+            --darker: #050505;
             --light: #f0f0f0;
+            --light-gray: #aaa;
             --gray: #333;
+            --input-bg: #1a1a1a;
             --card-bg: rgba(30, 30, 30, 0.8);
         }
         
@@ -19,17 +23,17 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
         
         body {
             background-color: var(--dark);
             color: var(--light);
-            display: flex;
             min-height: 100vh;
+            display: flex;
         }
         
-        /* Sidebar (reutilizada do dashboard) */
+        /* Sidebar */
         .sidebar {
             width: 250px;
             background-color: rgba(0, 0, 0, 0.9);
@@ -38,6 +42,37 @@
             position: fixed;
             height: 100vh;
             z-index: 100;
+        }
+        
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .sidebar-logo img {
+            height: 70px;
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .sidebar-nav a {
+            color: var(--light);
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background-color: rgba(145, 125, 125, 0.3);
+            color: var(--primary);
         }
         
         /* Main Content */
@@ -61,17 +96,32 @@
             color: var(--primary);
         }
         
-        /* Formulário de Criação */
-        .sheet-form {
-            max-width: 800px;
-            margin: 0 auto;
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+        }
+        
+        /* Formulário de Ficha */
+        .character-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
         }
         
         .form-section {
             background-color: var(--card-bg);
             border-radius: 8px;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
             border: 1px solid rgba(145, 125, 125, 0.3);
         }
         
@@ -79,35 +129,28 @@
             font-family: 'Cinzel', serif;
             color: var(--primary);
             margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray);
         }
         
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #ccc;
+            color: var(--light-gray);
         }
         
-        .form-group input,
-        .form-group select,
+        .form-group input, 
+        .form-group select, 
         .form-group textarea {
             width: 100%;
-            padding: 0.7rem;
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
+            padding: 0.8rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--gray);
+            border-radius: 5px;
             color: var(--light);
         }
         
@@ -118,37 +161,48 @@
         
         .attributes-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
-            margin-top: 1rem;
         }
         
-        .attribute-card {
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            padding: 1rem;
-            text-align: center;
-            border: 1px solid var(--gray);
+        .attribute-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
-        .attribute-card label {
-            display: block;
-            margin-bottom: 0.5rem;
+        .attribute-value {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
             font-weight: bold;
-            color: var(--primary);
+            margin: 0.5rem 0;
         }
         
-        .attribute-card input {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
+        .skills-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .form-actions {
+            grid-column: span 2;
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
-            margin-top: 2rem;
+            margin-top: 1rem;
         }
         
         .btn {
@@ -166,20 +220,61 @@
         }
         
         .btn-primary:hover {
-            background-color: #a58e8e;
+            background-color: var(--primary-dark);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
         }
         
         .btn-secondary {
-            background-color: #333;
+            background-color: var(--gray);
             color: var(--light);
         }
         
-        .btn-secondary:hover {
-            background-color: #444;
+        /* Preview Section */
+        .preview-section {
+            grid-column: span 2;
+        }
+        
+        .character-preview {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            border: 1px solid var(--primary);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .preview-title {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .preview-divider {
+            border: none;
+            height: 2px;
+            background-color: var(--primary);
+            margin: 1rem 0;
+        }
+        
+        .preview-attribute {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
         }
         
         /* Responsivo */
+        @media (max-width: 1024px) {
+            .character-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions, .preview-section {
+                grid-column: span 1;
+            }
+        }
+        
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -191,17 +286,7 @@
                 margin-left: 0;
             }
             
-            .attributes-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .attributes-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .form-grid {
+            .attributes-grid, .skills-list {
                 grid-template-columns: 1fr;
             }
         }
@@ -223,9 +308,9 @@
                 <i class="fas fa-scroll"></i>
                 Meus Personagens
             </a>
-            <a href="create-character.html" class="active">
+            <a href="new-character.html" class="active">
                 <i class="fas fa-plus-circle"></i>
-                Criar Personagem
+                Nova Ficha
             </a>
             <a href="campaigns.html">
                 <i class="fas fa-dungeon"></i>
@@ -241,119 +326,247 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <h1><i class="fas fa-plus-circle"></i> Criar Nova Ficha</h1>
+            <h1>Criar Nova Ficha</h1>
+            <div class="user-menu">
+                <span id="username">Usuário</span>
+                <img src="assets/default-avatar.png" alt="Avatar" class="user-avatar" id="userAvatar">
+            </div>
         </div>
         
-        <form id="characterForm" class="sheet-form">
-            <!-- Seção Básica -->
+        <form id="characterForm" class="character-form">
+            <!-- Seção 1: Informações Básicas -->
             <div class="form-section">
-                <h2 class="section-title"><i class="fas fa-user"></i> Informações Básicas</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="characterName">Nome do Personagem</label>
-                        <input type="text" id="characterName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="characterClass">Classe</label>
-                        <select id="characterClass" required>
-                            <option value="">Selecione...</option>
-                            <option value="Guerreiro">Guerreiro</option>
-                            <option value="Mago">Mago</option>
-                            <option value="Ladino">Ladino</option>
-                            <option value="Clérigo">Clérigo</option>
-                            <option value="Ranger">Ranger</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="characterRace">Raça</label>
-                        <select id="characterRace" required>
-                            <option value="">Selecione...</option>
-                            <option value="Humano">Humano</option>
-                            <option value="Elfo">Elfo</option>
-                            <option value="Anão">Anão</option>
-                            <option value="Halfling">Halfling</option>
-                            <option value="Meio-Elfo">Meio-Elfo</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="characterLevel">Nível</label>
-                        <input type="number" id="characterLevel" min="1" max="20" value="1" required>
-                    </div>
+                <h2 class="section-title">Informações Básicas</h2>
+                
+                <div class="form-group">
+                    <label for="characterName">Nome do Personagem</label>
+                    <input type="text" id="characterName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterAge">Idade/Faixa Etária</label>
+                    <input type="text" id="characterAge">
+                </div>
+                
+                <div class="form-group">
+                    <label for="archetype">Arquétipo</label>
+                    <input type="text" id="archetype">
+                </div>
+                
+                <div class="form-group">
+                    <label for="appearance">Aparência</label>
+                    <textarea id="appearance"></textarea>
                 </div>
             </div>
             
-            <!-- Atributos -->
+            <!-- Seção 2: Atributos -->
             <div class="form-section">
-                <h2 class="section-title"><i class="fas fa-dumbbell"></i> Atributos</h2>
+                <h2 class="section-title">Atributos</h2>
+                
                 <div class="attributes-grid">
-                    <div class="attribute-card">
-                        <label for="strength">Força</label>
-                        <input type="number" id="strength" min="1" max="20" value="10" required>
+                    <div class="attribute-item">
+                        <label for="bruto">Bruto</label>
+                        <div class="attribute-value">
+                            <input type="number" id="bruto" min="1" max="10" value="5" class="attribute-input">
+                        </div>
                     </div>
-                    <div class="attribute-card">
-                        <label for="dexterity">Destreza</label>
-                        <input type="number" id="dexterity" min="1" max="20" value="10" required>
+                    
+                    <div class="attribute-item">
+                        <label for="destreza">Destreza</label>
+                        <div class="attribute-value">
+                            <input type="number" id="destreza" min="1" max="10" value="5" class="attribute-input">
+                        </div>
                     </div>
-                    <div class="attribute-card">
-                        <label for="constitution">Constituição</label>
-                        <input type="number" id="constitution" min="1" max="20" value="10" required>
+                    
+                    <div class="attribute-item">
+                        <label for="sabedoria">Sabedoria</label>
+                        <div class="attribute-value">
+                            <input type="number" id="sabedoria" min="1" max="10" value="5" class="attribute-input">
+                        </div>
                     </div>
-                    <div class="attribute-card">
-                        <label for="intelligence">Inteligência</label>
-                        <input type="number" id="intelligence" min="1" max="20" value="10" required>
-                    </div>
-                    <div class="attribute-card">
-                        <label for="wisdom">Sabedoria</label>
-                        <input type="number" id="wisdom" min="1" max="20" value="10" required>
-                    </div>
-                    <div class="attribute-card">
-                        <label for="charisma">Carisma</label>
-                        <input type="number" id="charisma" min="1" max="20" value="10" required>
+                    
+                    <div class="attribute-item">
+                        <label for="comunicacao">Comunicação</label>
+                        <div class="attribute-value">
+                            <input type="number" id="comunicacao" min="1" max="10" value="5" class="attribute-input">
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Descrição -->
+            <!-- Seção 3: Detalhes do Personagem -->
             <div class="form-section">
-                <h2 class="section-title"><i class="fas fa-book"></i> Descrição</h2>
+                <h2 class="section-title">Detalhes do Personagem</h2>
+                
                 <div class="form-group">
-                    <label for="characterBackground">História</label>
-                    <textarea id="characterBackground" placeholder="Conte a história do seu personagem..."></textarea>
+                    <label for="characterClass">Classe</label>
+                    <input type="text" id="characterClass">
                 </div>
+                
                 <div class="form-group">
-                    <label for="characterAppearance">Aparência</label>
-                    <textarea id="characterAppearance" placeholder="Descreva a aparência do seu personagem..."></textarea>
+                    <label for="affiliation">Afiliação</label>
+                    <input type="text" id="affiliation">
+                </div>
+                
+                <div class="form-group">
+                    <label for="origin">Origem</label>
+                    <textarea id="origin"></textarea>
                 </div>
             </div>
             
-            <!-- Equipamento -->
+            <!-- Seção 4: Perícias -->
             <div class="form-section">
-                <h2 class="section-title"><i class="fas fa-shield-alt"></i> Equipamento</h2>
-                <div class="form-group">
-                    <label for="characterEquipment">Itens Iniciais</label>
-                    <textarea id="characterEquipment" placeholder="Liste os itens que seu personagem possui..."></textarea>
+                <h2 class="section-title">Perícias</h2>
+                
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill1">
+                        <label for="skill1">Sobrevivente</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill2">
+                        <label for="skill2">Mestre Improvisador</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill3">
+                        <label for="skill3">Instinto de Fuga</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill4">
+                        <label for="skill4">Sangue Frio</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill5">
+                        <label for="skill5">Mestre Explorador</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill6">
+                        <label for="skill6">Mão Leve</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill7">
+                        <label for="skill7">Líder</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill8">
+                        <label for="skill8">Canibalismo Tático</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill9">
+                        <label for="skill9">Adaptação a Veneno</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill10">
+                        <label for="skill10">Cão de Guarda</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill11">
+                        <label for="skill11">Língua de Cobra</label>
+                    </div>
+                    <div class="skill-item">
+                        <input type="checkbox" id="skill12">
+                        <label for="skill12">Profeta do Caos</label>
+                    </div>
                 </div>
             </div>
             
-            <!-- Ações -->
+            <!-- Seção 5: Equipamento e Combate -->
+            <div class="form-section">
+                <h2 class="section-title">Equipamento e Combate</h2>
+                
+                <div class="form-group">
+                    <label for="equipment">Equipamentos</label>
+                    <textarea id="equipment"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bonus">Bônus</label>
+                    <textarea id="bonus"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="armor">Armadura (Proteção/Agilidade)</label>
+                    <input type="text" id="armor">
+                </div>
+                
+                <div class="form-group">
+                    <label for="weapons">Armas (Dano/Distância/Básicas)</label>
+                    <textarea id="weapons"></textarea>
+                </div>
+            </div>
+            
+            <!-- Seção 6: Relacionamentos -->
+            <div class="form-section">
+                <h2 class="section-title">Relacionamentos</h2>
+                
+                <div class="form-group">
+                    <label for="relationship1">F01</label>
+                    <input type="text" id="relationship1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="relationship2">F02</label>
+                    <input type="text" id="relationship2">
+                </div>
+                
+                <div class="form-group">
+                    <label for="relationship3">F03</label>
+                    <input type="text" id="relationship3">
+                </div>
+                
+                <div class="form-group">
+                    <label for="relationship4">F04</label>
+                    <input type="text" id="relationship4">
+                </div>
+            </div>
+            
+            <!-- Preview -->
+            <div class="form-section preview-section">
+                <h2 class="section-title">Pré-visualização</h2>
+                <div class="character-preview" id="characterPreview">
+                    <div class="preview-title" id="previewName">NOME DO PERSONAGEM</div>
+                    <hr class="preview-divider">
+                    
+                    <h3>Atributos</h3>
+                    <div class="preview-attribute">
+                        <span>Bruto:</span>
+                        <span id="previewBruto">5</span>
+                    </div>
+                    <div class="preview-attribute">
+                        <span>Destreza:</span>
+                        <span id="previewDestreza">5</span>
+                    </div>
+                    <div class="preview-attribute">
+                        <span>Sabedoria:</span>
+                        <span id="previewSabedoria">5</span>
+                    </div>
+                    <div class="preview-attribute">
+                        <span>Comunicação:</span>
+                        <span id="previewComunicacao">5</span>
+                    </div>
+                    
+                    <hr class="preview-divider">
+                    <div id="previewOtherInfo">
+                        Mais informações serão exibidas aqui conforme preenchimento
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ações do Formulário -->
             <div class="form-actions">
-                <button type="button" class="btn btn-secondary" id="cancelBtn">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Salvar Personagem
-                </button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar Personagem</button>
             </div>
         </form>
     </div>
 
-    <!-- Firebase -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     
     <script>
-        // Configuração do Firebase (substitua com suas credenciais)
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
             authDomain: "purgatum-rpg-admin.firebaseapp.com",
@@ -367,14 +580,114 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-
-        // Verifica autenticação
+        
+        // Atualizar preview conforme formulário é preenchido
+        function updatePreview() {
+            document.getElementById('previewName').textContent = 
+                document.getElementById('characterName').value || 'NOME DO PERSONAGEM';
+            
+            document.getElementById('previewBruto').textContent = 
+                document.getElementById('bruto').value;
+            
+            document.getElementById('previewDestreza').textContent = 
+                document.getElementById('destreza').value;
+            
+            document.getElementById('previewSabedoria').textContent = 
+                document.getElementById('sabedoria').value;
+            
+            document.getElementById('previewComunicacao').textContent = 
+                document.getElementById('comunicacao').value;
+            
+            // Você pode adicionar mais atualizações de preview aqui
+        }
+        
+        // Adiciona eventos para atualizar o preview
+        document.querySelectorAll('input, textarea, select').forEach(element => {
+            element.addEventListener('input', updatePreview);
+            element.addEventListener('change', updatePreview);
+        });
+        
+        // Carregar dados do usuário
         auth.onAuthStateChanged((user) => {
-            if (!user) {
+            if (user) {
+                document.getElementById('username').textContent = user.displayName || user.email.split('@')[0];
+                
+                if (user.photoURL) {
+                    document.getElementById('userAvatar').src = user.photoURL;
+                }
+            } else {
                 window.location.href = 'login.html';
             }
         });
-
+        
+        // Salvar personagem no Firestore
+        document.getElementById('characterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const user = auth.currentUser;
+            if (!user) {
+                alert('Você precisa estar logado para salvar um personagem.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Coletar dados do formulário
+            const characterData = {
+                userId: user.uid,
+                name: document.getElementById('characterName').value,
+                age: document.getElementById('characterAge').value,
+                archetype: document.getElementById('archetype').value,
+                appearance: document.getElementById('appearance').value,
+                attributes: {
+                    bruto: parseInt(document.getElementById('bruto').value),
+                    destreza: parseInt(document.getElementById('destreza').value),
+                    sabedoria: parseInt(document.getElementById('sabedoria').value),
+                    comunicacao: parseInt(document.getElementById('comunicacao').value)
+                },
+                class: document.getElementById('characterClass').value,
+                affiliation: document.getElementById('affiliation').value,
+                origin: document.getElementById('origin').value,
+                equipment: document.getElementById('equipment').value,
+                bonus: document.getElementById('bonus').value,
+                armor: document.getElementById('armor').value,
+                weapons: document.getElementById('weapons').value,
+                relationships: [
+                    document.getElementById('relationship1').value,
+                    document.getElementById('relationship2').value,
+                    document.getElementById('relationship3').value,
+                    document.getElementById('relationship4').value
+                ],
+                skills: [],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Adicionar perícias selecionadas
+            for (let i = 1; i <= 12; i++) {
+                if (document.getElementById(`skill${i}`).checked) {
+                    const skillName = document.querySelector(`label[for="skill${i}"]`).textContent;
+                    characterData.skills.push(skillName);
+                }
+            }
+            
+            try {
+                // Salvar no Firestore
+                await db.collection('characters').add(characterData);
+                alert('Personagem criado com sucesso!');
+                window.location.href = 'characters.html';
+            } catch (error) {
+                console.error('Erro ao salvar personagem:', error);
+                alert('Ocorreu um erro ao salvar o personagem. Por favor, tente novamente.');
+            }
+        });
+        
+        // Botão cancelar
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja cancelar? Todas as alterações serão perdidas.')) {
+                window.location.href = 'characters.html';
+            }
+        });
+        
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
@@ -382,66 +695,9 @@
                 window.location.href = 'index.html';
             });
         });
-
-        // Cancelar criação
-        document.getElementById('cancelBtn').addEventListener('click', () => {
-            if (confirm('Tem certeza que deseja cancelar? Todas as alterações serão perdidas.')) {
-                window.location.href = 'characters.html';
-            }
-        });
-
-        // Salvar personagem
-        document.getElementById('characterForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const user = auth.currentUser;
-            if (!user) {
-                alert('Você precisa estar logado para criar um personagem.');
-                return;
-            }
-            
-            const characterData = {
-                userId: user.uid,
-                nome: document.getElementById('characterName').value,
-                classe: document.getElementById('characterClass').value,
-                raca: document.getElementById('characterRace').value,
-                nivel: parseInt(document.getElementById('characterLevel').value),
-                atributos: {
-                    forca: parseInt(document.getElementById('strength').value),
-                    destreza: parseInt(document.getElementById('dexterity').value),
-                    constituicao: parseInt(document.getElementById('constitution').value),
-                    inteligencia: parseInt(document.getElementById('intelligence').value),
-                    sabedoria: parseInt(document.getElementById('wisdom').value),
-                    carisma: parseInt(document.getElementById('charisma').value)
-                },
-                descricao: {
-                    historia: document.getElementById('characterBackground').value,
-                    aparência: document.getElementById('characterAppearance').value
-                },
-                equipamento: document.getElementById('characterEquipment').value,
-                dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            try {
-                // Salva no Firestore
-                const docRef = await db.collection('characters').add(characterData);
-                
-                // Atualiza a lista de personagens do usuário
-                await db.collection('users').doc(user.uid).update({
-                    personagens: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-                });
-                
-                alert('Personagem criado com sucesso!');
-                window.location.href = `character-sheet.html?id=${docRef.id}`;
-            } catch (error) {
-                console.error('Erro ao criar personagem:', error);
-                alert('Erro ao criar personagem: ' + error.message);
-            }
-        });
-    </script>
-</body>
-</html>
-        });
+        
+        // Inicializar preview
+        updatePreview();
     </script>
 </body>
 </html>
