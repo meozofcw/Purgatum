@@ -347,123 +347,101 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     
     <script>
+<script>
+    // Configuração do Firebase (substitua com suas credenciais)
+    const firebaseConfig = {
+        apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+        authDomain: "purgatum-rpg-admin.firebaseapp.com",
+        projectId: "purgatum-rpg-admin",
+        storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+        messagingSenderId: "274276091155",
+        appId: "1:274276091155:web:71129a94e8a13d194246e6"
+    };
 
-        // Verificar autenticação ao carregar o dashboard
-firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-        // Se não estiver autenticado, redireciona para login
-        window.location.href = 'login.html';
-    } else {
-        // Se estiver autenticado, carrega os dados do usuário
-        loadUserData(user.uid);
-    }
-});
+    // Inicializa o Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-// Função para carregar dados do usuário
-async function loadUserData(uid) {
-    try {
-        const doc = await firebase.firestore().collection('users').doc(uid).get();
-        if (doc.exists) {
-            // Preencher dados do dashboard...
-        }
-    } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-    }
-}
-
-// Logout
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    firebase.auth().signOut().then(() => {
-        window.location.href = 'login.html';
-    });
-});
-        // Configuração do Firebase (substitua com suas credenciais)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
-            authDomain: "purgatum-rpg-admin.firebaseapp.com",
-            projectId: "purgatum-rpg-admin",
-            storageBucket: "purgatum-rpg-admin.firebasestorage.app",
-            messagingSenderId: "274276091155",
-            appId: "1:274276091155:web:71129a94e8a13d194246e6"
-        };
-
-        // Inicializa o Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Verifica autenticação
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                loadUserData(user);
-                loadDashboardData(user.uid);
-            }
-        });
-
-        // Carrega dados do usuário
-        function loadUserData(user) {
-            document.getElementById('username').textContent = user.displayName || user.email.split('@')[0];
-            
-            // Atualiza avatar se existir
-            if (user.photoURL) {
-                document.getElementById('userAvatar').src = user.photoURL;
-            }
-        }
-
-        // Carrega dados do dashboard
-        function loadDashboardData(userId) {
-            // Carrega contagem de personagens
-            db.collection("characters").where("userId", "==", userId).get()
-                .then((snapshot) => {
-                    document.getElementById('charactersCount').textContent = snapshot.size;
-                });
-            
-            // Carrega atividades recentes (exemplo)
-            const activities = [
-                {
-                    icon: "fa-scroll",
-                    text: "Você criou o personagem Aragorn",
-                    time: "2 horas atrás"
-                },
-                {
-                    icon: "fa-dungeon",
-                    text: "Entrou na campanha 'Reinos Perdidos'",
-                    time: "1 dia atrás"
-                },
-                {
-                    icon: "fa-trophy",
-                    text: "Conquista 'Primeiros Passos' desbloqueada",
-                    time: "3 dias atrás"
+    // Função para carregar dados do usuário
+    async function loadUserData(uid) {
+        try {
+            const doc = await db.collection('users').doc(uid).get();
+            if (doc.exists) {
+                document.getElementById('username').textContent = doc.data().displayName || doc.data().email.split('@')[0];
+                if (doc.data().photoURL) {
+                    document.getElementById('userAvatar').src = doc.data().photoURL;
                 }
-            ];
-            
-            const activityList = document.getElementById('recentActivity');
-            activityList.innerHTML = '';
-            
-            activities.forEach(activity => {
-                activityList.innerHTML += `
-                    <div class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas ${activity.icon}"></i>
-                        </div>
-                        <div class="activity-content">
-                            ${activity.text}
-                            <div class="activity-time">${activity.time}</div>
-                        </div>
-                    </div>
-                `;
-            });
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados do usuário:", error);
         }
+    }
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            auth.signOut().then(() => {
-                window.location.href = 'index.html';
+    // Carrega dados do dashboard
+    function loadDashboardData(userId) {
+        // Carrega contagem de personagens
+        db.collection("characters").where("userId", "==", userId).get()
+            .then((snapshot) => {
+                document.getElementById('charactersCount').textContent = snapshot.size;
+            })
+            .catch(error => {
+                console.error("Erro ao carregar contagem de personagens:", error);
             });
+
+        // Carrega contagem de campanhas (exemplo - adapte sua lógica)
+        db.collection("campaigns").where("members", "array-contains", userId).get()
+            .then((snapshot) => {
+                document.getElementById('campaignsCount').textContent = snapshot.size;
+            })
+            .catch(error => {
+                console.error("Erro ao carregar contagem de campanhas:", error);
+            });
+
+        // Carrega atividades recentes (exemplo)
+        const activities = [
+            { icon: "fa-scroll", text: "Você criou o personagem Aragorn", time: "2 horas atrás" },
+            { icon: "fa-dungeon", text: "Entrou na campanha 'Reinos Perdidos'", time: "1 dia atrás" },
+            { icon: "fa-trophy", text: "Conquista 'Primeiros Passos' desbloqueada", time: "3 dias atrás" }
+        ];
+
+        const activityList = document.getElementById('recentActivity');
+        activityList.innerHTML = '';
+
+        activities.forEach(activity => {
+            activityList.innerHTML += `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas ${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        ${activity.text}
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                </div>
+            `;
         });
+    }
+
+    // Monitorar estado de autenticação
+    auth.onAuthStateChanged((user) => {
+        if (!user) {
+            // Se não estiver autenticado, redireciona para login
+            window.location.href = 'login.html';
+        } else {
+            // Se estiver autenticado, carrega os dados do usuário e do dashboard
+            loadUserData(user.uid);
+            loadDashboardData(user.uid);
+        }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        auth.signOut().then(() => {
+            window.location.href = 'index.html';
+        });
+    });
     </script>
 </body>
 </html>
