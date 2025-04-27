@@ -368,9 +368,15 @@
             const doc = await db.collection('users').doc(uid).get();
             if (doc.exists) {
                 document.getElementById('username').textContent = doc.data().displayName || doc.data().email.split('@')[0];
-                if (doc.data().photoURL) {
-                    document.getElementById('userAvatar').src = doc.data().photoURL;
-                }
+                const userData = doc.data();
+
+    if (userData && userData.photoURL) {
+       document.getElementById('userAvatar').src = userData.photoURL;
+   } else if (auth.currentUser && auth.currentUser.photoURL) {
+       // Se não tem no Firestore, tenta pegar da conta do Firebase Auth
+       document.getElementById('userAvatar').src = auth.currentUser.photoURL;
+ }
+
             }
         } catch (error) {
             console.error("Erro ao carregar dados do usuário:", error);
@@ -423,16 +429,34 @@
     }
 
     // Monitorar estado de autenticação
-    auth.onAuthStateChanged((user) => {
-        if (!user) {
-            // Se não estiver autenticado, redireciona para login
-            window.location.href = 'login.html';
-        } else {
-            // Se estiver autenticado, carrega os dados do usuário e do dashboard
-            loadUserData(user.uid);
-            loadDashboardData(user.uid);
+    auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = 'login.html';
+    } else {
+        const userRef = db.collection('users').doc(user.uid);
+
+        try {
+            const doc = await userRef.get();
+            if (!doc.exists) {
+                // Se não existir perfil, cria automático
+                await userRef.set({
+                    displayName: user.displayName || user.email.split('@')[0],
+                    email: user.email,
+                    photoURL: user.photoURL || null,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log("Perfil de usuário criado automaticamente.");
+            }
+        } catch (error) {
+            console.error("Erro ao verificar/criar perfil do usuário:", error);
         }
-    });
+
+        // Agora carrega os dados normalmente
+        loadUserData(user.uid);
+        loadDashboardData(user.uid);
+    }
+});
+
 
     // Logout
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
