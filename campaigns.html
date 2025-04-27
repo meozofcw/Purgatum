@@ -427,9 +427,8 @@
         // Obtendo a referência ao Firestore e ao Firebase Auth
 const userId = firebase.auth().currentUser.uid;
 
-const pageState = {
-  campaigns: [],
-};
+const pageState = campaigns: [];
+  
 
 // Função para buscar campanhas onde o usuário é o dono
 const fetchOwnerCampaigns = async () => {
