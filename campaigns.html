@@ -488,20 +488,17 @@
         };
 
         // Monitorar estado de autenticação
-        auth.onAuthStateChanged(user => {
-            pageState.user = user;
-            updateUserProfileNav(user);
-            console.log('Estado de autenticação:', user);
+auth.onAuthStateChanged(user => {
+    pageState.user = user;
+    updateUserProfileNav(user);
+    console.log('Estado de autenticação:', user);
 
-            if (user) {
-                loadUserCampaigns(user.uid);
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
-
-        // Carregar informações do perfil na inicialização
-        updateUserProfileNav(auth.currentUser);
+    if (user) {
+        loadUserCampaigns(user.uid);
+    } else {
+        window.location.href = 'login.html';
+    }
+});
     </script>
 </body>
 </html>
