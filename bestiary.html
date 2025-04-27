@@ -1,1 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestiário - Purgatum RPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base (consistentes com a página de campanhas) */
+        :root {
+            --primary: #917d7d;
+            --primary-dark: #7a6868;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --light: #f0f0f0;
+            --light-gray: #aaa;
+            --gray: #333;
+            --input-bg: #1a1a1a;
+            --error: #ff6b6b;
+            --success: #4caf50;
+            --danger: #dc3545;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
 
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .logo img {
+            height: 60px;
+            transition: all 0.3s;
+        }
+
+        .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(145, 125, 125, 0.5);
+        }
+
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--light);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Estilos específicos do bestiário */
+        .bestiary-section {
+            background-color: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .bestiary-section h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-filter input, .search-filter select {
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--light);
+            font-size: 1rem;
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        .creatures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .creature-card {
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--gray);
+            transition: all 0.3s;
+        }
+
+        .creature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+
+        .creature-image {
+            height: 200px;
+            background-color: var(--darker);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .creature-image .type-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-dark);
+            color: var(--light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .creature-info {
+            padding: 1.2rem;
+        }
+
+        .creature-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .creature-description {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .creature-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 0.8rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .stat-item span {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .creature-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .creature-actions .btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            flex-grow: 1;
+        }
+
+        /* Modal de detalhes */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--darker);
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--light-gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        .creature-detail-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .creature-detail-image {
+            width: 300px;
+            height: 300px;
+            background-color: var(--dark);
+            background-size: cover;
+            background-position: center;
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+
+        .creature-detail-info {
+            flex-grow: 1;
+        }
+
+        .creature-detail-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .creature-detail-type {
+            display: inline-block;
+            background-color: var(--primary-dark);
+            color: var(--light);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .creature-detail-description {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-section h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+            border-bottom: 1px solid var(--gray);
+            padding-bottom: 0.3rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+
+        .abilities-list {
+            list-style-type: none;
+        }
+
+        .ability-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .ability-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .ability-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+
+            .creature-detail-header {
+                flex-direction: column;
+            }
+
+            .creature-detail-image {
+                width: 100%;
+                height: 250px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
+        </div>
+        <div class="user-profile" id="userProfile">
+            <!-- Perfil do usuário será preenchido via JavaScript -->
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Bestiário</h1>
+            <div>
+                <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+            </div>
+        </div>
+
+        <section class="bestiary-section">
+            <h2>Criaturas do Purgatório</h2>
+            
+            <div class="search-filter">
+                <input type="text" id="searchCreature" placeholder="Buscar criatura...">
+                <select id="filterType">
+                    <option value="">Todos os tipos</option>
+                    <option value="demônio">Demônio</option>
+                    <option value="espírito">Espírito</option>
+                    <option value="aberração">Aberrações</option>
+                    <option value="morto-vivo">Mortos-Vivos</option>
+                    <option value="celestial">Celestial</option>
+                </select>
+                <select id="filterChallenge">
+                    <option value="">Todos os níveis</option>
+                    <option value="1">Nível 1</option>
+                    <option value="2">Nível 2</option>
+                    <option value="3">Nível 3</option>
+                    <option value="4">Nível 4</option>
+                    <option value="5">Nível 5</option>
+                </select>
+            </div>
+
+            <div class="creatures-grid" id="creaturesGrid">
+                <!-- Criaturas serão carregadas via JavaScript -->
+                <div class="loading-message">Carregando bestiário...</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de detalhes da criatura -->
+    <div class="modal-overlay" id="creatureModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="creature-detail-header">
+                <div class="creature-detail-image" id="detailImage"></div>
+                <div class="creature-detail-info">
+                    <h2 class="creature-detail-name" id="detailName">Nome da Criatura</h2>
+                    <span class="creature-detail-type" id="detailType">Tipo</span>
+                    <p class="creature-detail-description" id="detailDescription">Descrição da criatura...</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="detailLevel">1</div>
+                            <div class="stat-label">Nível</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="detailHP">50</div>
+                            <div class="stat-label">Pontos de Vida</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="detailAC">15</div>
+                            <div class="stat-label">Classe de Armadura</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="detailSpeed">9m</div>
+                            <div class="stat-label">Deslocamento</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h3>Atributos</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="detailSTR">10</div>
+                        <div class="stat-label">Força</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="detailDEX">10</div>
+                        <div class="stat-label">Destreza</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="detailCON">10</div>
+                        <div class="stat-label">Constituição</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="detailINT">10</div>
+                        <div class="stat-label">Inteligência</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="detailWIS">10</div>
+                        <div class="stat-label">Sabedoria</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="detailCHA">10</div>
+                        <div class="stat-label">Carisma</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h3>Habilidades Especiais</h3>
+                <ul class="abilities-list" id="detailAbilities">
+                    <!-- Habilidades serão preenchidas via JavaScript -->
+                </ul>
+            </div>
+
+            <div class="detail-section">
+                <h3>Ações</h3>
+                <ul class="abilities-list" id="detailActions">
+                    <!-- Ações serão preenchidas via JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase (consistente com a página de campanhas)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+            authDomain: "purgatum-rpg-admin.firebaseapp.com",
+            projectId: "purgatum-rpg-admin",
+            storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+            messagingSenderId: "274276091155",
+            appId: "1:274276091155:web:71129a94e8a13d194246e6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Elementos da página
+        const userProfileNav = document.getElementById('userProfile');
+        const creaturesGrid = document.getElementById('creaturesGrid');
+        const searchInput = document.getElementById('searchCreature');
+        const filterType = document.getElementById('filterType');
+        const filterChallenge = document.getElementById('filterChallenge');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        // Elementos do modal
+        const creatureModal = document.getElementById('creatureModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        // Estado da aplicação
+        const pageState = {
+            user: null,
+            creatures: [],
+            filteredCreatures: []
+        };
+
+        // Funções utilitárias
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        function updateUserProfileNav(user) {
+            if (user) {
+                const photoURL = user.photoURL || 'assets/default-profile.png';
+                userProfileNav.innerHTML = `
+                    <img src="${photoURL}" alt="Foto do perfil" class="profile-picture" id="profilePicture">
+                    <div class="profile-dropdown">
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="profile.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <div class="divider"></div>
+                        <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                `;
+                
+                document.getElementById('logout').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    auth.signOut().then(() => {
+                        window.location.href = 'index.html';
+                    });
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Carregar criaturas do Firestore
+        async function loadCreatures() {
+            showLoading();
+            try {
+                const snapshot = await db.collection('bestiary').get();
+                pageState.creatures = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                filterCreatures();
+            } catch (error) {
+                console.error('Erro ao carregar criaturas:', error);
+                creaturesGrid.innerHTML = '<p class="empty-message">Erro ao carregar o bestiário.</p>';
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Filtrar criaturas com base nos inputs de busca
+        function filterCreatures() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const typeFilter = filterType.value;
+            const challengeFilter = filterChallenge.value;
+            
+            pageState.filteredCreatures = pageState.creatures.filter(creature => {
+                const matchesSearch = creature.name.toLowerCase().includes(searchTerm) || 
+                                     creature.description.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || creature.type === typeFilter;
+                const matchesChallenge = !challengeFilter || creature.level == challengeFilter;
+                
+                return matchesSearch && matchesType && matchesChallenge;
+            });
+            
+            renderCreatures();
+        }
+
+        // Renderizar a lista de criaturas
+        function renderCreatures() {
+            if (pageState.filteredCreatures.length === 0) {
+                creaturesGrid.innerHTML = '<p class="empty-message">Nenhuma criatura encontrada.</p>';
+                return;
+            }
+            
+            creaturesGrid.innerHTML = '';
+            
+            pageState.filteredCreatures.forEach(creature => {
+                const creatureCard = document.createElement('div');
+                creatureCard.className = 'creature-card';
+                creatureCard.innerHTML = `
+                    <div class="creature-image" style="background-image: url('${creature.image || 'assets/default-creature.jpg'}')">
+                        <span class="type-badge">${creature.type}</span>
+                    </div>
+                    <div class="creature-info">
+                        <h3 class="creature-name">${creature.name}</h3>
+                        <p class="creature-description">${creature.description || 'Nenhuma descrição disponível.'}</p>
+                        <div class="creature-stats">
+                            <div class="stat-item">Nível <span>${creature.level}</span></div>
+                            <div class="stat-item">PV <span>${creature.hp}</span></div>
+                            <div class="stat-item">CA <span>${creature.ac}</span></div>
+                        </div>
+                        <div class="creature-actions">
+                            <button class="btn btn-primary view-detail" data-id="${creature.id}">Detalhes</button>
+                        </div>
+                    </div>
+                `;
+                
+                creaturesGrid.appendChild(creatureCard);
+            });
+            
+            // Adicionar event listeners aos botões de detalhes
+            document.querySelectorAll('.view-detail').forEach(button => {
+                button.addEventListener('click', () => showCreatureDetail(button.dataset.id));
+            });
+        }
+
+        // Mostrar detalhes da criatura no modal
+        async function showCreatureDetail(creatureId) {
+            showLoading();
+            try {
+                const creature = pageState.creatures.find(c => c.id === creatureId);
+                if (!creature) return;
+                
+                // Preencher os dados do modal
+                document.getElementById('detailName').textContent = creature.name;
+                document.getElementById('detailType').textContent = creature.type;
+                document.getElementById('detailDescription').textContent = creature.description || 'Nenhuma descrição disponível.';
+                document.getElementById('detailLevel').textContent = creature.level;
+                document.getElementById('detailHP').textContent = creature.hp;
+                document.getElementById('detailAC').textContent = creature.ac;
+                document.getElementById('detailSpeed').textContent = creature.speed || '9m';
+                
+                // Atributos
+                document.getElementById('detailSTR').textContent = creature.stats?.str || '10';
+                document.getElementById('detailDEX').textContent = creature.stats?.dex || '10';
+                document.getElementById('detailCON').textContent = creature.stats?.con || '10';
+                document.getElementById('detailINT').textContent = creature.stats?.int || '10';
+                document.getElementById('detailWIS').textContent = creature.stats?.wis || '10';
+                document.getElementById('detailCHA').textContent = creature.stats?.cha || '10';
+                
+                // Habilidades
+                const abilitiesList = document.getElementById('detailAbilities');
+                abilitiesList.innerHTML = '';
+                if (creature.abilities?.length) {
+                    creature.abilities.forEach(ability => {
+                        const li = document.createElement('li');
+                        li.className = 'ability-item';
+                        li.innerHTML = `
+                            <div class="ability-name">${ability.name}</div>
+                            <div>${ability.description}</div>
+                        `;
+                        abilitiesList.appendChild(li);
+                    });
+                } else {
+                    abilitiesList.innerHTML = '<li class="ability-item">Nenhuma habilidade especial.</li>';
+                }
+                
+                // Ações
+                const actionsList = document.getElementById('detailActions');
+                actionsList.innerHTML = '';
+                if (creature.actions?.length) {
+                    creature.actions.forEach(action => {
+                        const li = document.createElement('li');
+                        li.className = 'ability-item';
+                        li.innerHTML = `
+                            <div class="ability-name">${action.name}</div>
+                            <div>${action.description}</div>
+                        `;
+                        actionsList.appendChild(li);
+                    });
+                } else {
+                    actionsList.innerHTML = '<li class="ability-item">Nenhuma ação especial.</li>';
+                }
+                
+                // Imagem
+                const detailImage = document.getElementById('detailImage');
+                detailImage.style.backgroundImage = `url('${creature.image || 'assets/default-creature.jpg'}')`;
+                
+                // Mostrar modal
+                creatureModal.classList.add('active');
+            } catch (error) {
+                console.error('Erro ao carregar detalhes da criatura:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('input', filterCreatures);
+        filterType.addEventListener('change', filterCreatures);
+        filterChallenge.addEventListener('change', filterCreatures);
+        closeModal.addEventListener('click', () => {
+            creatureModal.classList.remove('active');
+        });
+
+        // Inicialização
+        auth.onAuthStateChanged(user => {
+            pageState.user = user;
+            updateUserProfileNav(user);
+            
+            if (user) {
+                loadCreatures();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>
