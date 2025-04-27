@@ -410,7 +410,7 @@
                         <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                         <a href="profile.html"><i class="fas fa-user"></i> Meu Perfil</a>
                         <div class="divider"></div>
-                        <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+<a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
                     </div>
                 `;
                 document.getElementById('logout').addEventListener('click', (e) => {
@@ -424,83 +424,84 @@
             }
         }
 
-        // Obtendo a referência ao Firestore e ao Firebase Auth
-const userId = firebase.auth().currentUser.uid;
+        // Função para buscar campanhas onde o usuário é o dono
+        const fetchOwnerCampaigns = async (userId) => {
+            const campaignsSnapshot = await db.collection('campaigns')
+                .where('ownerId', '==', userId)  // Campanhas onde o usuário é o dono
+                .get();
 
-const pageState = campaigns: [];
-  
+            campaignsSnapshot.forEach(doc => {
+                console.log('Campanha (owner):', doc.id, doc.data());
+                pageState.campaigns.push({ id: doc.id, ...doc.data() });
+            });
+        };
 
-// Função para buscar campanhas onde o usuário é o dono
-const fetchOwnerCampaigns = async () => {
-  const campaignsSnapshot = await db.collection('campaigns')
-    .where('ownerId', '==', userId)  // Campanhas onde o usuário é o dono
-    .get();
+        // Função para buscar campanhas onde o usuário é membro
+        const fetchMemberCampaigns = async (userId) => {
+            const memberOfSnapshot = await db.collection('campaigns')
+                .where('members', 'array-contains', userId)  // Campanhas onde o usuário é membro
+                .get();
 
-  campaignsSnapshot.forEach(doc => {
-    console.log('Campanha (owner):', doc.id, doc.data());
-    pageState.campaigns.push({ id: doc.id, ...doc.data() });
-  });
-};
+            memberOfSnapshot.forEach(doc => {
+                const campaign = { id: doc.id, ...doc.data() };
+                // Verificar se a campanha já foi adicionada para evitar duplicação
+                if (!pageState.campaigns.some(c => c.id === campaign.id)) {
+                    console.log('Campanha (member):', doc.id, doc.data());
+                    pageState.campaigns.push(campaign);
+                }
+            });
+        };
 
-// Função para buscar campanhas onde o usuário é membro
-const fetchMemberCampaigns = async () => {
-  const memberOfSnapshot = await db.collection('campaigns')
-    .where('members', 'array-contains', userId)  // Campanhas onde o usuário é membro
-    .get();
+        function renderCampaignList(campaigns) {
+            myCampaignsList.innerHTML = '';
+            if (campaigns.length > 0) {
+                campaigns.forEach(campaign => {
+                    const campaignCard = document.createElement('div');
+                    campaignCard.className = 'campaign-card';
+                    campaignCard.innerHTML = `
+                        <div class="campaign-info">
+                            <h3 class="campaign-name">${campaign.name}</h3>
+                            <p class="campaign-owner">${campaign.ownerName || 'Mestre Desconhecido'}</p>
+                            <p class="campaign-code">Código: <strong>${campaign.code}</strong></p>
+                        </div>
+                        <div class="campaign-actions">
+                            <button class="btn btn-primary">Ver Detalhes</button>
+                        </div>
+                    `;
+                    myCampaignsList.appendChild(campaignCard);
+                });
+            } else {
+                const emptyMessage = document.createElement('p');
+                emptyMessage.className = 'empty-message';
+                emptyMessage.textContent = 'Nenhuma campanha criada ou participada ainda.';
+                myCampaignsList.appendChild(emptyMessage);
+            }
+        }
 
-  memberOfSnapshot.forEach(doc => {
-    const campaign = { id: doc.id, ...doc.data() };
-    // Verificar se a campanha já foi adicionada para evitar duplicação
-    if (!pageState.campaigns.some(c => c.id === campaign.id)) {
-      console.log('Campanha (member):', doc.id, doc.data());
-      pageState.campaigns.push(campaign);
-    }
-  });
-};
-
-// Função para carregar as campanhas
-const loadCampaigns = async () => {
-  pageState.campaigns = [];  // Limpar campanhas atuais
-  await fetchOwnerCampaigns();  // Carregar campanhas do dono
-  await fetchMemberCampaigns(); // Carregar campanhas dos membros
-
-  // Atualizar a interface com as campanhas carregadas
-  updateCampaignsUI(pageState.campaigns);
-};
-
-// Função para atualizar a interface com as campanhas
-const updateCampaignsUI = (campaigns) => {
-  const campaignsList = document.getElementById('campaigns-list');
-  campaignsList.innerHTML = '';  // Limpar a lista antes de adicionar os itens
-
-  if (campaigns.length === 0) {
-    campaignsList.innerHTML = '<p>Você ainda não tem campanhas.</p>';
-  } else {
-    campaigns.forEach(campaign => {
-      const listItem = document.createElement('li');
-      listItem.textContent = `Campanha: ${campaign.name}`;
-      campaignsList.appendChild(listItem);
-    });
-  }
-};
-
-// Chamar a função para carregar as campanhas
-loadCampaigns();
-
-        });
+        const loadUserCampaigns = async (userId) => {
+            showLoading();
+            pageState.campaigns = []; // Limpar a lista de campanhas
+            await fetchOwnerCampaigns(userId);
+            await fetchMemberCampaigns(userId);
+            renderCampaignList(pageState.campaigns);
+            hideLoading();
+        };
 
         // Monitorar estado de autenticação
         auth.onAuthStateChanged(user => {
             pageState.user = user;
             updateUserProfileNav(user);
             console.log('Estado de autenticação:', user);
-            
+
             if (user) {
                 loadUserCampaigns(user.uid);
             } else {
                 window.location.href = 'login.html';
             }
         });
+
+        // Carregar informações do perfil na inicialização
+        updateUserProfileNav(auth.currentUser);
     </script>
 </body>
 </html>
