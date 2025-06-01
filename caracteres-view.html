@@ -224,7 +224,7 @@
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">Status do Personagem</h1>
-            <a href="meus-personagens.html" class="btn btn-primary">
+            <a href="./caracteres.html" class="btn btn-primary">
                 <i class="fas fa-arrow-left"></i> Voltar para Meus Personagens
             </a>
         </div>
@@ -336,6 +336,8 @@
         const userProfile = document.getElementById('userProfile');
         const loadingOverlay = document.getElementById('loadingOverlay');
         
+        let initialAuthAttempted = false; // Flag para controlar a tentativa de autenticação inicial
+
         // Mostrar loading
         function showLoading() {
             loadingOverlay.style.display = 'flex';
@@ -364,12 +366,12 @@
                 document.getElementById('logout').addEventListener('click', (e) => {
                     e.preventDefault();
                     auth.signOut().then(() => {
-                        window.location.href = 'index.html';
+                        window.location.replace('index.html'); // Usando replace
                     });
                 });
             } else {
                 // Se não estiver logado, redireciona para login
-                window.location.href = 'login.html';
+                window.location.replace('./login.html'); // Usando replace
             }
         }
 
@@ -408,12 +410,12 @@
                 } else {
                     console.warn("Nenhum personagem encontrado com o ID:", characterId);
                     window.alert("Personagem não encontrado.");
-                    window.location.href = 'meus-personagens.html'; // Redireciona de volta
+                    window.location.replace('./caracteres.html'); // Usando replace
                 }
             } catch (error) {
                 console.error("Erro ao carregar personagem:", error);
                 window.alert("Ocorreu um erro ao carregar o personagem. Por favor, tente novamente.");
-                window.location.href = 'meus-personagens.html'; // Redireciona de volta em caso de erro
+                window.location.replace('./caracteres.html'); // Usando replace
             } finally {
                 hideLoading();
             }
@@ -422,46 +424,43 @@
         // Observar mudanças no estado de autenticação
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // Usuário está logado
                 updateUserProfile(user);
-                // Tenta fazer login com o token personalizado se disponível
-                if (initialAuthToken) {
-                    try {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                        console.log("Autenticado com token personalizado.");
-                    } catch (error) {
-                        console.error("Erro ao autenticar com token personalizado:", error);
-                        // Se o token personalizado falhar, tenta autenticar anonimamente
-                        try {
-                            await signInAnonymously(auth);
-                            console.log("Autenticado anonimamente.");
-                        } catch (anonError) {
-                            console.error("Erro ao autenticar anonimamente:", anonError);
-                            window.location.href = 'login.html';
-                        }
-                    }
-                } else {
-                    // Se não houver token personalizado, tenta autenticar anonimamente
-                    try {
-                        await signInAnonymously(auth);
-                        console.log("Autenticado anonimamente.");
-                    } catch (anonError) {
-                        console.error("Erro ao autenticar anonimamente:", anonError);
-                        window.location.href = 'login.html';
-                    }
-                }
-
-                // Carrega os dados do personagem após a autenticação
                 const characterId = getCharacterIdFromUrl();
                 if (characterId) {
                     loadCharacterData(characterId);
                 } else {
                     window.alert("ID do personagem não fornecido na URL.");
-                    window.location.href = 'meus-personagens.html';
+                    window.location.replace('./caracteres.html'); // Usando replace
                 }
             } else {
-                window.location.href = 'login.html';
+                // Usuário não está logado
+                if (!initialAuthAttempted) {
+                    // Se ainda não tentamos a autenticação inicial, faça-o agora
+                    initialAuthAttempted = true;
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                            console.log("Autenticado com token personalizado.");
+                        } else {
+                            await signInAnonymously(auth);
+                            console.log("Autenticado anonimamente.");
+                        }
+                        // onAuthStateChanged será chamado novamente com o usuário autenticado (ou não)
+                    } catch (error) {
+                        console.error("Erro na autenticação inicial:", error);
+                        window.location.replace('./login.html'); // Usando replace
+                    }
+                } else {
+                    // Se já tentamos a autenticação inicial e o usuário ainda não está logado, redireciona
+                    window.location.replace('./login.html'); // Usando replace
+                }
             }
         });
+
+        // O showLoading() inicial será chamado pela primeira execução de onAuthStateChanged
+        // e hideLoading() será chamado por loadCharacterData.
+        // Isso garante que o loading apareça enquanto a autenticação e o carregamento de dados ocorrem.
     </script>
 </body>
 </html>
