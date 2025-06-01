@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Status do Personagem</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      background-color: #1e1e1e;
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    button {
+      background-color: #6200ee;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background-color: #3700b3;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Status do Personagem</h1>
+    <div class="form-group">
+      <label for="name">Nome</label>
+      <input type="text" id="name">
+    </div>
+    <div class="grid">
+      <div class="form-group">
+        <label for="age">Idade</label>
+        <input type="text" id="age">
+      </div>
+      <div class="form-group">
+        <label for="affiliation">Afiliação</label>
+        <input type="text" id="affiliation">
+      </div>
+      <div class="form-group">
+        <label for="archetype">Arquétipo</label>
+        <input type="text" id="archetype">
+      </div>
+      <div class="form-group">
+        <label for="class">Classe</label>
+        <input type="text" id="class">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="appearance">Aparência</label>
+      <textarea id="appearance"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="origin">Origem</label>
+      <textarea id="origin"></textarea>
+    </div>
+    <div class="grid">
+      <div class="form-group">
+        <label for="armor">Armadura</label>
+        <input type="text" id="armor">
+      </div>
+      <div class="form-group">
+        <label for="weapons">Armas</label>
+        <input type="text" id="weapons">
+      </div>
+      <div class="form-group">
+        <label for="equipment">Equipamento</label>
+        <input type="text" id="equipment">
+      </div>
+      <div class="form-group">
+        <label for="bonus">Bônus</label>
+        <input type="text" id="bonus">
+      </div>
+    </div>
+    <h2>Atributos</h2>
+    <div class="grid">
+      <div class="form-group">
+        <label for="bruto">Bruto</label>
+        <input type="text" id="bruto">
+      </div>
+      <div class="form-group">
+        <label for="destreza">Destreza</label>
+        <input type="text" id="destreza">
+      </div>
+      <div class="form-group">
+        <label for="sabedoria">Sabedoria</label>
+        <input type="text" id="sabedoria">
+      </div>
+      <div class="form-group">
+        <label for="comunicacao">Comunicação</label>
+        <input type="text" id="comunicacao">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="skills">Perícias (separadas por vírgula)</label>
+      <input type="text" id="skills">
+    </div>
+    <div class="form-group">
+      <label for="relationships">Relacionamentos (separados por vírgula)</label>
+      <input type="text" id="relationships">
+    </div>
+    <button onclick="salvarPersonagem()">Salvar</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+      authDomain: "purgatum-rpg-admin.firebaseapp.com",
+      databaseURL: "https://purgatum-rpg-admin-default-rtdb.firebaseio.com",
+      projectId: "purgatum-rpg-admin",
+      storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+      messagingSenderId: "274276091155",
+      appId: "1:274276091155:web:71129a94e8a13d194246e6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function salvarPersonagem() {
+      const personagem = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        affiliation: document.getElementById("affiliation").value,
+        archetype: document.getElementById("archetype").value,
+        class: document.getElementById("class").value,
+        appearance: document.getElementById("appearance").value,
+        origin: document.getElementById("origin").value,
+        armor: document.getElementById("armor").value,
+        weapons: document.getElementById("weapons").value,
+        equipment: document.getElementById("equipment").value,
+        bonus: document.getElementById("bonus").value,
+        attributes: {
+          bruto: parseInt(document.getElementById("bruto").value),
+          destreza: parseInt(document.getElementById("destreza").value),
+          sabedoria: parseInt(document.getElementById("sabedoria").value),
+          comunicacao: parseInt(document.getElementById("comunicacao").value),
+        },
+        skills: document.getElementById("skills").value.split(',').map(s => s.trim()),
+        relationships: document.getElementById("relationships").value.split(',').map(r => r.trim()),
+        updatedAt: new Date()
+      };
+
+      const docRef = doc(db, "characters", personagem.name);
+      await setDoc(docRef, personagem, { merge: true });
+      alert("Personagem salvo com sucesso!");
+    }
+  </script>
+</body>
+</html>
