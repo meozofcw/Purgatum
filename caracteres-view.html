@@ -218,8 +218,7 @@
             <a href="https://purgatumrpg.netlify.app/index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
         </div>
         <div class="user-profile" id="userProfile">
-            </div>
-    </nav>
+            </div> </nav>
     
     <div class="container">
         <div class="page-header">
@@ -304,9 +303,7 @@
             <label for="relationships">Relacionamentos (separados por vírgula)</label>
             <input type="text" id="relationships" readonly>
         </div>
-        </div>
-    
-    <div class="loading-overlay" id="loadingOverlay">
+    </div> <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
     
@@ -422,6 +419,15 @@
                 }
             } catch (error) {
                 console.error("Erro ao carregar personagem:", error); // Log do erro completo
+                if (error.code) {
+                    console.error("Firestore Error Code:", error.code);
+                }
+                if (error.message) {
+                    console.error("Firestore Error Message:", error.message);
+                }
+                if (error.stack) {
+                    console.error("Firestore Error Stack:", error.stack);
+                }
                 window.alert("Ocorreu um erro ao carregar o personagem. Por favor, tente novamente.");
                 setTimeout(() => { // Adicionado setTimeout
                     window.location.replace('https://purgatumrpg.netlify.app/characters');
