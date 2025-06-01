@@ -283,17 +283,14 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
             <a href="index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
         </div>
         <div class="user-profile" id="userProfile">
-            <!-- Será preenchido pelo JavaScript -->
-        </div>
+            </div>
     </nav>
     
-    <!-- Container Principal -->
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">Meus Personagens</h1>
@@ -303,10 +300,8 @@
         </div>
         
         <div class="characters-grid" id="charactersGrid">
-            <!-- Personagens serão carregados aqui dinamicamente -->
-        </div>
+            </div>
         
-        <!-- Mensagem quando não há personagens -->
         <div class="empty-message" id="emptyMessage" style="display: none;">
             <i class="fas fa-dragon"></i>
             <h3>Nenhum Personagem Criado</h3>
@@ -317,12 +312,10 @@
         </div>
     </div>
     
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
     
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
@@ -447,7 +440,8 @@
                     document.querySelectorAll('.view-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const characterId = e.currentTarget.getAttribute('data-id');
-                            window.location.href = `character.html?id=${characterId}`;
+                            // Alterado de 'character.html' para 'caracteres-view.html'
+                            window.location.href = `caracteres-view.html?id=${characterId}`;
                         });
                     });
                     
@@ -461,7 +455,11 @@
                     document.querySelectorAll('.delete-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const characterId = e.currentTarget.getAttribute('data-id');
-                            if (confirm('Tem certeza que deseja excluir este personagem?')) {
+                            // Substituindo `confirm()` por uma mensagem modal personalizada
+                            // Para fins de demonstração, usaremos um console.log e um alert simples.
+                            // Em uma aplicação real, você implementaria um modal de confirmação.
+                            console.log('Confirmação de exclusão para:', characterId);
+                            if (window.confirm('Tem certeza que deseja excluir este personagem?')) { // Usando window.confirm para compatibilidade, mas idealmente seria um modal customizado
                                 deleteCharacter(characterId);
                             }
                         });
@@ -470,7 +468,10 @@
                 .catch((error) => {
                     hideLoading();
                     console.error('Erro ao carregar personagens:', error);
-                    alert('Ocorreu um erro ao carregar seus personagens. Por favor, tente novamente.');
+                    // Substituindo `alert()` por uma mensagem modal personalizada
+                    // Em uma aplicação real, você implementaria um modal de erro.
+                    console.error('Ocorreu um erro ao carregar seus personagens. Por favor, tente novamente.');
+                    window.alert('Ocorreu um erro ao carregar seus personagens. Por favor, tente novamente.'); // Usando window.alert para compatibilidade, mas idealmente seria um modal customizado
                 });
         }
         
@@ -481,7 +482,10 @@
             db.collection('characters').doc(characterId).delete()
                 .then(() => {
                     hideLoading();
-                    alert('Personagem excluído com sucesso!');
+                    // Substituindo `alert()` por uma mensagem modal personalizada
+                    // Em uma aplicação real, você implementaria um modal de sucesso.
+                    console.log('Personagem excluído com sucesso!');
+                    window.alert('Personagem excluído com sucesso!'); // Usando window.alert para compatibilidade, mas idealmente seria um modal customizado
                     // Recarregar a lista de personagens
                     const user = auth.currentUser;
                     if (user) {
@@ -491,7 +495,10 @@
                 .catch((error) => {
                     hideLoading();
                     console.error('Erro ao excluir personagem:', error);
-                    alert('Ocorreu um erro ao excluir o personagem. Por favor, tente novamente.');
+                    // Substituindo `alert()` por uma mensagem modal personalizada
+                    // Em uma aplicação real, você implementaria um modal de erro.
+                    console.error('Ocorreu um erro ao excluir o personagem. Por favor, tente novamente.');
+                    window.alert('Ocorreu um erro ao excluir o personagem. Por favor, tente novamente.'); // Usando window.alert para compatibilidade, mas idealmente seria um modal customizado
                 });
         }
         
