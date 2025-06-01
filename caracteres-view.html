@@ -366,19 +366,25 @@
                 document.getElementById('logout').addEventListener('click', (e) => {
                     e.preventDefault();
                     auth.signOut().then(() => {
-                        window.location.replace('https://purgatumrpg.netlify.app/index.html'); // Usando replace
+                        setTimeout(() => { // Adicionado setTimeout
+                            window.location.replace('https://purgatumrpg.netlify.app/index.html');
+                        }, 0);
                     });
                 });
             } else {
                 // Se não estiver logado, redireciona para login
-                window.location.replace('https://purgatumrpg.netlify.app/login.html'); // Usando replace
+                setTimeout(() => { // Adicionado setTimeout
+                    window.location.replace('https://purgatumrpg.netlify.app/login.html');
+                }, 0);
             }
         }
 
         // Função para obter o ID do personagem da URL
         function getCharacterIdFromUrl() {
             const params = new URLSearchParams(window.location.search);
-            return params.get('id');
+            const characterId = params.get('id');
+            console.log("ID do personagem da URL:", characterId); // Log para depuração
+            return characterId;
         }
 
         // Função para carregar e exibir os dados do personagem
@@ -410,12 +416,16 @@
                 } else {
                     console.warn("Nenhum personagem encontrado com o ID:", characterId);
                     window.alert("Personagem não encontrado.");
-                    window.location.replace('https://purgatumrpg.netlify.app/characters'); // Usando replace
+                    setTimeout(() => { // Adicionado setTimeout
+                        window.location.replace('https://purgatumrpg.netlify.app/characters');
+                    }, 0);
                 }
             } catch (error) {
-                console.error("Erro ao carregar personagem:", error);
+                console.error("Erro ao carregar personagem:", error); // Log do erro completo
                 window.alert("Ocorreu um erro ao carregar o personagem. Por favor, tente novamente.");
-                window.location.replace('https://purgatumrpg.netlify.app/characters'); // Usando replace
+                setTimeout(() => { // Adicionado setTimeout
+                    window.location.replace('https://purgatumrpg.netlify.app/characters');
+                }, 0);
             } finally {
                 hideLoading();
             }
@@ -423,6 +433,7 @@
 
         // Observar mudanças no estado de autenticação
         onAuthStateChanged(auth, async (user) => {
+            console.log("Estado de autenticação alterado. Usuário:", user); // Log para depuração
             if (user) {
                 // Usuário está logado
                 updateUserProfile(user);
@@ -431,7 +442,9 @@
                     loadCharacterData(characterId);
                 } else {
                     window.alert("ID do personagem não fornecido na URL.");
-                    window.location.replace('https://purgatumrpg.netlify.app/characters'); // Usando replace
+                    setTimeout(() => { // Adicionado setTimeout
+                        window.location.replace('https://purgatumrpg.netlify.app/characters');
+                    }, 0);
                 }
             } else {
                 // Usuário não está logado
@@ -449,11 +462,15 @@
                         // onAuthStateChanged será chamado novamente com o usuário autenticado (ou não)
                     } catch (error) {
                         console.error("Erro na autenticação inicial:", error);
-                        window.location.replace('https://purgatumrpg.netlify.app/login.html'); // Usando replace
+                        setTimeout(() => { // Adicionado setTimeout
+                            window.location.replace('https://purgatumrpg.netlify.app/login.html');
+                        }, 0);
                     }
                 } else {
                     // Se já tentamos a autenticação inicial e o usuário ainda não está logado, redireciona
-                    window.location.replace('https://purgatumrpg.netlify.app/login.html'); // Usando replace
+                    setTimeout(() => { // Adicionado setTimeout
+                        window.location.replace('https://purgatumrpg.netlify.app/login.html');
+                    }, 0);
                 }
             }
         });
