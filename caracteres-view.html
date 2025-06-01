@@ -215,7 +215,7 @@
 <body>
     <nav class="navbar">
         <div class="logo">
-            <a href="index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
+            <a href="https://purgatumrpg.netlify.app/index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
         </div>
         <div class="user-profile" id="userProfile">
             </div>
@@ -224,7 +224,7 @@
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">Status do Personagem</h1>
-            <a href="./caracteres.html" class="btn btn-primary">
+            <a href="https://purgatumrpg.netlify.app/characters" class="btn btn-primary">
                 <i class="fas fa-arrow-left"></i> Voltar para Meus Personagens
             </a>
         </div>
@@ -355,8 +355,8 @@
                 userProfile.innerHTML = `
                     <img src="${photoURL}" alt="Foto do perfil" class="profile-picture" id="profilePicture">
                     <div class="profile-dropdown">
-                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                        <a href="profile.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <a href="https://purgatumrpg.netlify.app/dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="https://purgatumrpg.netlify.app/profile.html"><i class="fas fa-user"></i> Meu Perfil</a>
                         <div class="divider"></div>
                         <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
                     </div>
@@ -366,12 +366,12 @@
                 document.getElementById('logout').addEventListener('click', (e) => {
                     e.preventDefault();
                     auth.signOut().then(() => {
-                        window.location.replace('index.html'); // Usando replace
+                        window.location.replace('https://purgatumrpg.netlify.app/index.html'); // Usando replace
                     });
                 });
             } else {
                 // Se não estiver logado, redireciona para login
-                window.location.replace('./login.html'); // Usando replace
+                window.location.replace('https://purgatumrpg.netlify.app/login.html'); // Usando replace
             }
         }
 
@@ -410,12 +410,12 @@
                 } else {
                     console.warn("Nenhum personagem encontrado com o ID:", characterId);
                     window.alert("Personagem não encontrado.");
-                    window.location.replace('./caracteres.html'); // Usando replace
+                    window.location.replace('https://purgatumrpg.netlify.app/characters'); // Usando replace
                 }
             } catch (error) {
                 console.error("Erro ao carregar personagem:", error);
                 window.alert("Ocorreu um erro ao carregar o personagem. Por favor, tente novamente.");
-                window.location.replace('./caracteres.html'); // Usando replace
+                window.location.replace('https://purgatumrpg.netlify.app/characters'); // Usando replace
             } finally {
                 hideLoading();
             }
@@ -431,7 +431,7 @@
                     loadCharacterData(characterId);
                 } else {
                     window.alert("ID do personagem não fornecido na URL.");
-                    window.location.replace('./caracteres.html'); // Usando replace
+                    window.location.replace('https://purgatumrpg.netlify.app/characters'); // Usando replace
                 }
             } else {
                 // Usuário não está logado
@@ -449,11 +449,11 @@
                         // onAuthStateChanged será chamado novamente com o usuário autenticado (ou não)
                     } catch (error) {
                         console.error("Erro na autenticação inicial:", error);
-                        window.location.replace('./login.html'); // Usando replace
+                        window.location.replace('https://purgatumrpg.netlify.app/login.html'); // Usando replace
                     }
                 } else {
                     // Se já tentamos a autenticação inicial e o usuário ainda não está logado, redireciona
-                    window.location.replace('./login.html'); // Usando replace
+                    window.location.replace('https://purgatumrpg.netlify.app/login.html'); // Usando replace
                 }
             }
         });
