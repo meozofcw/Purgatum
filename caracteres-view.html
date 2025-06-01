@@ -1,213 +1,467 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Status do Personagem</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #f1f1f1;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Personagem - Purgatum RPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #917d7d;
+            --primary-dark: #7a6868;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --light: #f0f0f0;
+            --light-gray: #aaa;
+            --gray: #333;
+            --input-bg: #1a1a1a;
+            --error: #ff6b6b;
+            --success: #4caf50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .logo img {
+            height: 60px;
+            transition: all 0.3s;
+        }
+        
+        .logo img:hover {
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+        
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .profile-picture:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(145, 125, 125, 0.5);
+        }
+        
+        /* Container Principal */
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1000px; /* Ajustado para o formulário */
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--dark);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(145, 125, 125, 0.4);
+        }
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
+        /* Form specific styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--light);
+        }
 
-    .form-group {
-      margin-bottom: 15px;
-    }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            color: var(--light);
+            pointer-events: none; /* Make non-editable */
+            opacity: 0.8; /* Slight visual cue for non-editable */
+        }
 
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
+        textarea {
+            resize: vertical;
+        }
 
-    input[type="text"],
-    textarea {
-      width: 100%;
-      padding: 10px;
-      background-color: #1e1e1e;
-      border: 1px solid #444;
-      border-radius: 5px;
-      color: #fff;
-    }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
 
-    textarea {
-      resize: vertical;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
-
-    button {
-      background-color: #6200ee;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1em;
-    }
-
-    button:hover {
-      background-color: #3700b3;
-    }
-
-    @media (max-width: 600px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>Status do Personagem</h1>
-    <div class="form-group">
-      <label for="name">Nome</label>
-      <input type="text" id="name">
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html"><img src="assets/logo-purgatum.webp" alt="Purgatum RPG"></a>
+        </div>
+        <div class="user-profile" id="userProfile">
+            </div>
+    </nav>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Status do Personagem</h1>
+            <a href="meus-personagens.html" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Voltar para Meus Personagens
+            </a>
+        </div>
+        
+        <div class="form-group">
+            <label for="name">Nome</label>
+            <input type="text" id="name" readonly>
+        </div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="age">Idade</label>
+                <input type="text" id="age" readonly>
+            </div>
+            <div class="form-group">
+                <label for="affiliation">Afiliação</label>
+                <input type="text" id="affiliation" readonly>
+            </div>
+            <div class="form-group">
+                <label for="archetype">Arquétipo</label>
+                <input type="text" id="archetype" readonly>
+            </div>
+            <div class="form-group">
+                <label for="class">Classe</label>
+                <input type="text" id="class" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="appearance">Aparência</label>
+            <textarea id="appearance" rows="4" readonly></textarea>
+        </div>
+        <div class="form-group">
+            <label for="origin">Origem</label>
+            <textarea id="origin" rows="4" readonly></textarea>
+        </div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="armor">Armadura</label>
+                <input type="text" id="armor" readonly>
+            </div>
+            <div class="form-group">
+                <label for="weapons">Armas</label>
+                <input type="text" id="weapons" readonly>
+            </div>
+            <div class="form-group">
+                <label for="equipment">Equipamento</label>
+                <input type="text" id="equipment" readonly>
+            </div>
+            <div class="form-group">
+                <label for="bonus">Bônus</label>
+                <input type="text" id="bonus" readonly>
+            </div>
+        </div>
+        <h2>Atributos</h2>
+        <div class="grid">
+            <div class="form-group">
+                <label for="bruto">Bruto</label>
+                <input type="text" id="bruto" readonly>
+            </div>
+            <div class="form-group">
+                <label for="destreza">Destreza</label>
+                <input type="text" id="destreza" readonly>
+            </div>
+            <div class="form-group">
+                <label for="sabedoria">Sabedoria</label>
+                <input type="text" id="sabedoria" readonly>
+            </div>
+            <div class="form-group">
+                <label for="comunicacao">Comunicação</label>
+                <input type="text" id="comunicacao" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="skills">Perícias (separadas por vírgula)</label>
+            <input type="text" id="skills" readonly>
+        </div>
+        <div class="form-group">
+            <label for="relationships">Relacionamentos (separados por vírgula)</label>
+            <input type="text" id="relationships" readonly>
+        </div>
+        </div>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
     </div>
-    <div class="grid">
-      <div class="form-group">
-        <label for="age">Idade</label>
-        <input type="text" id="age">
-      </div>
-      <div class="form-group">
-        <label for="affiliation">Afiliação</label>
-        <input type="text" id="affiliation">
-      </div>
-      <div class="form-group">
-        <label for="archetype">Arquétipo</label>
-        <input type="text" id="archetype">
-      </div>
-      <div class="form-group">
-        <label for="class">Classe</label>
-        <input type="text" id="class">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="appearance">Aparência</label>
-      <textarea id="appearance"></textarea>
-    </div>
-    <div class="form-group">
-      <label for="origin">Origem</label>
-      <textarea id="origin"></textarea>
-    </div>
-    <div class="grid">
-      <div class="form-group">
-        <label for="armor">Armadura</label>
-        <input type="text" id="armor">
-      </div>
-      <div class="form-group">
-        <label for="weapons">Armas</label>
-        <input type="text" id="weapons">
-      </div>
-      <div class="form-group">
-        <label for="equipment">Equipamento</label>
-        <input type="text" id="equipment">
-      </div>
-      <div class="form-group">
-        <label for="bonus">Bônus</label>
-        <input type="text" id="bonus">
-      </div>
-    </div>
-    <h2>Atributos</h2>
-    <div class="grid">
-      <div class="form-group">
-        <label for="bruto">Bruto</label>
-        <input type="text" id="bruto">
-      </div>
-      <div class="form-group">
-        <label for="destreza">Destreza</label>
-        <input type="text" id="destreza">
-      </div>
-      <div class="form-group">
-        <label for="sabedoria">Sabedoria</label>
-        <input type="text" id="sabedoria">
-      </div>
-      <div class="form-group">
-        <label for="comunicacao">Comunicação</label>
-        <input type="text" id="comunicacao">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="skills">Perícias (separadas por vírgula)</label>
-      <input type="text" id="skills">
-    </div>
-    <div class="form-group">
-      <label for="relationships">Relacionamentos (separados por vírgula)</label>
-      <input type="text" id="relationships">
-    </div>
-    <button onclick="salvarPersonagem()">Salvar</button>
-  </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Variáveis globais (fornecidas pelo ambiente Canvas)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
+            authDomain: "purgatum-rpg-admin.firebaseapp.com",
+            projectId: "purgatum-rpg-admin",
+            storageBucket: "purgatum-rpg-admin.firebasestorage.app",
+            messagingSenderId: "274276091155",
+            appId: "1:274276091155:web:71129a94e8a13d194246e6"
+        };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCM1qr6yNDCgm68S0QiMTkDDg5BS2NAAtE",
-      authDomain: "purgatum-rpg-admin.firebaseapp.com",
-      databaseURL: "https://purgatum-rpg-admin-default-rtdb.firebaseio.com",
-      projectId: "purgatum-rpg-admin",
-      storageBucket: "purgatum-rpg-admin.firebasestorage.app",
-      messagingSenderId: "274276091155",
-      appId: "1:274276091155:web:71129a94e8a13d194246e6"
-    };
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        // Elementos da UI
+        const userProfile = document.getElementById('userProfile');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        // Mostrar loading
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+        
+        // Esconder loading
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
 
-    async function salvarPersonagem() {
-      const personagem = {
-        name: document.getElementById("name").value,
-        age: document.getElementById("age").value,
-        affiliation: document.getElementById("affiliation").value,
-        archetype: document.getElementById("archetype").value,
-        class: document.getElementById("class").value,
-        appearance: document.getElementById("appearance").value,
-        origin: document.getElementById("origin").value,
-        armor: document.getElementById("armor").value,
-        weapons: document.getElementById("weapons").value,
-        equipment: document.getElementById("equipment").value,
-        bonus: document.getElementById("bonus").value,
-        attributes: {
-          bruto: parseInt(document.getElementById("bruto").value),
-          destreza: parseInt(document.getElementById("destreza").value),
-          sabedoria: parseInt(document.getElementById("sabedoria").value),
-          comunicacao: parseInt(document.getElementById("comunicacao").value),
-        },
-        skills: document.getElementById("skills").value.split(',').map(s => s.trim()),
-        relationships: document.getElementById("relationships").value.split(',').map(r => r.trim()),
-        updatedAt: new Date()
-      };
+        // Atualizar UI do perfil do usuário
+        function updateUserProfile(user) {
+            if (user) {
+                const photoURL = user.photoURL || 'assets/default-profile.png';
+                userProfile.innerHTML = `
+                    <img src="${photoURL}" alt="Foto do perfil" class="profile-picture" id="profilePicture">
+                    <div class="profile-dropdown">
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="profile.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <div class="divider"></div>
+                        <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                `;
+                
+                // Adiciona evento de logout
+                document.getElementById('logout').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    auth.signOut().then(() => {
+                        window.location.href = 'index.html';
+                    });
+                });
+            } else {
+                // Se não estiver logado, redireciona para login
+                window.location.href = 'login.html';
+            }
+        }
 
-      const docRef = doc(db, "characters", personagem.name);
-      await setDoc(docRef, personagem, { merge: true });
-      alert("Personagem salvo com sucesso!");
-    }
-  </script>
+        // Função para obter o ID do personagem da URL
+        function getCharacterIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Função para carregar e exibir os dados do personagem
+        async function loadCharacterData(characterId) {
+            showLoading();
+            try {
+                const docRef = doc(db, "characters", characterId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const character = docSnap.data();
+                    document.getElementById("name").value = character.name || '';
+                    document.getElementById("age").value = character.age || '';
+                    document.getElementById("affiliation").value = character.affiliation || '';
+                    document.getElementById("archetype").value = character.archetype || '';
+                    document.getElementById("class").value = character.class || '';
+                    document.getElementById("appearance").value = character.appearance || '';
+                    document.getElementById("origin").value = character.origin || '';
+                    document.getElementById("armor").value = character.armor || '';
+                    document.getElementById("weapons").value = character.weapons || '';
+                    document.getElementById("equipment").value = character.equipment || '';
+                    document.getElementById("bonus").value = character.bonus || '';
+                    document.getElementById("bruto").value = character.attributes?.bruto || '';
+                    document.getElementById("destreza").value = character.attributes?.destreza || '';
+                    document.getElementById("sabedoria").value = character.attributes?.sabedoria || '';
+                    document.getElementById("comunicacao").value = character.attributes?.comunicacao || '';
+                    document.getElementById("skills").value = character.skills?.join(', ') || '';
+                    document.getElementById("relationships").value = character.relationships?.join(', ') || '';
+                } else {
+                    console.warn("Nenhum personagem encontrado com o ID:", characterId);
+                    window.alert("Personagem não encontrado.");
+                    window.location.href = 'meus-personagens.html'; // Redireciona de volta
+                }
+            } catch (error) {
+                console.error("Erro ao carregar personagem:", error);
+                window.alert("Ocorreu um erro ao carregar o personagem. Por favor, tente novamente.");
+                window.location.href = 'meus-personagens.html'; // Redireciona de volta em caso de erro
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Observar mudanças no estado de autenticação
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                updateUserProfile(user);
+                // Tenta fazer login com o token personalizado se disponível
+                if (initialAuthToken) {
+                    try {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log("Autenticado com token personalizado.");
+                    } catch (error) {
+                        console.error("Erro ao autenticar com token personalizado:", error);
+                        // Se o token personalizado falhar, tenta autenticar anonimamente
+                        try {
+                            await signInAnonymously(auth);
+                            console.log("Autenticado anonimamente.");
+                        } catch (anonError) {
+                            console.error("Erro ao autenticar anonimamente:", anonError);
+                            window.location.href = 'login.html';
+                        }
+                    }
+                } else {
+                    // Se não houver token personalizado, tenta autenticar anonimamente
+                    try {
+                        await signInAnonymously(auth);
+                        console.log("Autenticado anonimamente.");
+                    } catch (anonError) {
+                        console.error("Erro ao autenticar anonimamente:", anonError);
+                        window.location.href = 'login.html';
+                    }
+                }
+
+                // Carrega os dados do personagem após a autenticação
+                const characterId = getCharacterIdFromUrl();
+                if (characterId) {
+                    loadCharacterData(characterId);
+                } else {
+                    window.alert("ID do personagem não fornecido na URL.");
+                    window.location.href = 'meus-personagens.html';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
 </body>
 </html>
